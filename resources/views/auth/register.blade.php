@@ -36,6 +36,12 @@
             </div>
         </form>
     </div>
+    <script>
+        window.laravelSession = {
+            success: @json(session('success')),
+            error: @json(session('error'))
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/auth.js') }}"></script>
 </body>

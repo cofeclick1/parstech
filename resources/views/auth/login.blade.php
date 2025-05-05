@@ -11,9 +11,6 @@
         <form method="POST" action="{{ route('login') }}">
             @csrf
             <h2>ورود به حساب کاربری</h2>
-            @if(session('error'))
-                <span class="error">{{ session('error') }}</span>
-            @endif
             <div class="input-group">
                 <label for="email">ایمیل</label>
                 <input type="email" name="email" id="email" value="{{ old('email') }}" required>
@@ -34,6 +31,12 @@
             </div>
         </form>
     </div>
+    <script>
+        window.laravelSession = {
+            success: @json(session('success')),
+            error: @json(session('error'))
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/auth.js') }}"></script>
 </body>

@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // پیام موفقیت یا خطا از session
-    let success = "{{ session('success') }}";
-    let error = "{{ session('error') }}";
+    let success = window.laravelSession?.success;
+    let error = window.laravelSession?.error;
     if (success) {
         Swal.fire({
             title: 'موفق!',
