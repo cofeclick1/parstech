@@ -6,7 +6,15 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ProductController;
 
+
+
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\QuickSaleController;
+use App\Http\Controllers\PersonController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,4 +43,28 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 
 // Dashboard - only for authenticated users
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
+
+Route::resource('invoices', InvoiceController::class);
+Route::resource('products', ProductController::class);
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// فاکتورها
+Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+
+// انبار
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/stocks/in', [StockController::class, 'in'])->name('stocks.in');
+Route::get('/stocks/out', [StockController::class, 'out'])->name('stocks.out');
+
+// فروش سریع
+Route::get('/quick-sale', [QuickSaleController::class, 'index'])->name('quick-sale');
+
+// اشخاص
+Route::get('/persons', [PersonController::class, 'index'])->name('persons.index');
+
+// گزارشات
+Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
 require __DIR__.'/auth.php';
