@@ -160,9 +160,9 @@
                     </ul>
                 </li>
 
-                {{-- انبار --}}
-                <li class="nav-item has-treeview {{ request()->is('products*') || request()->is('stocks*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('products*') || request()->is('stocks*') ? 'active' : '' }}">
+                                {{-- مدیریت انبار --}}
+                <li class="nav-item has-treeview {{ request()->is('products*') || request()->is('stocks*') || request()->is('categories*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('products*') || request()->is('stocks*') || request()->is('categories*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-warehouse"></i>
                         <p>
                             مدیریت انبار
@@ -192,6 +192,20 @@
                             <a href="{{ route('stocks.transfer') }}" class="nav-link {{ request()->routeIs('stocks.transfer') ? 'active' : '' }}">
                                 <i class="fas fa-exchange-alt nav-icon"></i>
                                 <p>انتقال بین انبارها</p>
+                            </a>
+                        </li>
+                        {{-- دسته‌بندی --}}
+                        <li class="nav-item">
+                            <a href="{{ route('categories.create') }}" class="nav-link {{ request()->routeIs('categories.create') ? 'active' : '' }}">
+                                <i class="fas fa-tags nav-icon"></i>
+                                <p>دسته‌بندی</p>
+                            </a>
+                        </li>
+                        {{-- لیست دسته‌بندی --}}
+                        <li class="nav-item">
+                            <a href="{{ route('categories.index') }}" class="nav-link {{ request()->routeIs('categories.index') ? 'active' : '' }}">
+                                <i class="fas fa-list-ul nav-icon"></i>
+                                <p>لیست دسته‌بندی</p>
                             </a>
                         </li>
                     </ul>

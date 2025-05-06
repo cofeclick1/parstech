@@ -102,5 +102,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+Route::resource('categories', CategoryController::class);
 
 require __DIR__.'/auth.php';
