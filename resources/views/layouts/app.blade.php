@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="../../fonts/fonts.css">
     <link rel="stylesheet" href="../../css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-xs8dF..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="{{ asset('css/sidebar-custom.css') }}">
+
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
@@ -27,7 +31,7 @@
         @yield('content')
     </div>
 
-    <script src="../js/sidebar.js"></script>
+<script src="{{ asset('js/sidebar-custom.js') }}"></script>
 @yield('scripts')
 @stack('scripts')
 </body>
