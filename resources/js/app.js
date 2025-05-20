@@ -6,13 +6,32 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
-// --- شروع کد Vue 3 و FormKit ---
+// Vue 3 و FormKit
 import { createApp } from 'vue';
 import { plugin as FormKitPlugin, defaultConfig } from '@formkit/vue';
+import ServiceForm from './components/ServiceForm.vue';
 
-// اگر قبلا المنت با این id داشتی، Vue رو mount کن
+// فیلدهای فرم را به صورت window متغیر می‌گذاریم تا از blade هم قابل تغییر باشد
+window.serviceFormFields = window.serviceFormFields || [
+    { type: 'text', name: 'name', label: 'نام', validation: 'required' },
+    { type: 'text', name: 'family', label: 'نام خانوادگی', validation: 'required' },
+    { type: 'text', name: 'nid', label: 'کد ملی', validation: 'required' },
+    { type: 'date', name: 'birth', label: 'تاریخ تولد' },
+    { type: 'tel', name: 'father_phone', label: 'شماره تماس پدر' },
+    { type: 'file', name: 'picture', label: 'تصویر' }
+];
+
+// فقط اگر المنت وجود داشت Vue mount شود
 if (document.getElementById('dynamic-service-form')) {
-    const app = createApp({});
+    const app = createApp({
+        data() {
+            return {
+                fields: window.serviceFormFields
+            }
+        },
+        template: `<ServiceForm :fields="fields" />`
+    });
+    app.component('ServiceForm', ServiceForm);
     app.use(FormKitPlugin, defaultConfig);
     app.mount('#dynamic-service-form');
 }

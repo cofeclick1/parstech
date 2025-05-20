@@ -21,7 +21,6 @@
   <script setup>
   import { ref } from 'vue';
 
-  // فیلدهای فرم از prop دریافت می‌شود
   const props = defineProps({
     fields: {
       type: Array,
@@ -32,20 +31,9 @@
   const success = ref(false);
 
   function handleSubmit(values) {
-    // اینجا می‌توانید اطلاعات را با ajax به بک‌اند بفرستید (نمونه ساده)
-    fetch('/services/save-form', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-      },
-      body: JSON.stringify(values)
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          success.value = true;
-        }
-      });
+    // اینجا می‌توانید اطلاعات را با ajax به بک‌اند بفرستید
+    // به عنوان تست:
+    console.log('فرم ارسال شد:', values);
+    success.value = true;
   }
   </script>

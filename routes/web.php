@@ -133,7 +133,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('categories/list', [CategoryController::class, 'apiList']);
 
     Route::resource('services', ServiceController::class);
-
+    Route::get('/services/formbuilder', function () {
+        return view('services.formbuilder');
+    });
     // Stock Management
     Route::prefix('stocks')->name('stocks.')->group(function () {
         Route::get('/in', [StockController::class, 'in'])->name('in');

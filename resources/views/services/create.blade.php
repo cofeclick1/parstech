@@ -4,7 +4,6 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/service-create.css') }}">
-    <!-- استایل FormKit (در صورت نیاز به سفارشی‌سازی می‌توانید حذف کنید) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@formkit/themes@1.0.0-beta.3/genesis/theme.css" />
 @endsection
 
@@ -106,30 +105,5 @@
 @endsection
 
 @section('scripts')
-    <script>
-        // نمونه فیلدهای فرم داینامیک، بعداً می‌توان از دیتابیس خواند
-        window.serviceFormFields = [
-            { type: 'text', name: 'name', label: 'نام', validation: 'required' },
-            { type: 'text', name: 'family', label: 'نام خانوادگی', validation: 'required' },
-            { type: 'text', name: 'nid', label: 'کد ملی', validation: 'required' },
-            { type: 'date', name: 'birth', label: 'تاریخ تولد' },
-            { type: 'tel', name: 'father_phone', label: 'شماره تماس پدر' },
-            { type: 'file', name: 'picture', label: 'تصویر' }
-        ];
-    </script>
-    <script type="module">
-        import { createApp } from 'vue';
-        import { plugin as FormKitPlugin, defaultConfig } from '@formkit/vue';
-        import ServiceForm from '../../js/components/ServiceForm.vue';
-
-        const app = createApp({
-            components: { ServiceForm },
-            data() {
-                return { fields: window.serviceFormFields }
-            },
-            template: `<ServiceForm :fields="fields" />`
-        });
-        app.use(FormKitPlugin, defaultConfig);
-        app.mount('#dynamic-service-form');
-    </script>
+    @vite('resources/js/app.js')
 @endsection
