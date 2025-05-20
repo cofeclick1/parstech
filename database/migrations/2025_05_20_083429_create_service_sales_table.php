@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('invoice_number')->nullable();
             $table->string('customer_name')->nullable();
-            $table->string('customer_national_id')->nullable(); // اختیاری
+            $table->string('customer_national_id')->nullable();
             $table->string('customer_mobile')->nullable();
             $table->bigInteger('total_price')->default(0);
             $table->text('description')->nullable();
