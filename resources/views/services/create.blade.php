@@ -8,6 +8,7 @@
 
 @section('content')
 <section class="container pt-4">
+
     <div class="row justify-content-center">
         <div class="col-lg-7">
             <div class="card shadow">
@@ -84,7 +85,7 @@
                     </form>
                 </div>
             </div>
-
+            <div id="dynamic-service-form"></div>
             <div class="alert alert-info mt-4">
                 <strong>راهنما:</strong>
                 <ul class="mb-1">
@@ -99,5 +100,30 @@
 @endsection
 
 @section('scripts')
-    <!-- اگر نیاز به اسکریپت خاصی بود اینجا اضافه کنید -->
+    <script>
+        // مثال برای فیلدهای فرم داینامیک (می‌توانی از دیتابیس هم مقداردهی کنی)
+        window.serviceFormFields = [
+            { type: 'text', name: 'name', label: 'نام', validation: 'required' },
+            { type: 'text', name: 'family', label: 'نام خانوادگی', validation: 'required' },
+            { type: 'text', name: 'nid', label: 'کد ملی', validation: 'required' },
+            { type: 'date', name: 'birth', label: 'تاریخ تولد' },
+            { type: 'tel', name: 'father_phone', label: 'شماره تماس پدر' },
+            { type: 'file', name: 'picture', label: 'تصویر' }
+        ];
+    </script>
+    <script type="module">
+        import { createApp } from 'vue';
+        import { plugin as FormKitPlugin, defaultConfig } from '@formkit/vue';
+        import ServiceForm from '../../js/components/ServiceForm.vue';
+
+        const app = createApp({
+          components: { ServiceForm },
+          data() {
+              return { fields: window.serviceFormFields }
+          },
+          template: `<ServiceForm :fields="fields" />`
+        });
+        app.use(FormKitPlugin, defaultConfig);
+        app.mount('#dynamic-service-form');
+    </script>
 @endsection

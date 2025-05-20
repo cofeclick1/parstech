@@ -124,6 +124,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/company', [SettingsController::class, 'company'])->name('company');
         Route::get('/users', [SettingsController::class, 'users'])->name('users');
     });
+    Route::post('/services/save-form', [\App\Http\Controllers\ServiceController::class, 'saveForm']);
 
     // Products and Categories
     Route::resource('products', ProductController::class);

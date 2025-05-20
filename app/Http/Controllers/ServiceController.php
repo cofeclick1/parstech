@@ -161,4 +161,14 @@ class ServiceController extends Controller
         $service->delete();
         return redirect()->route('services.index')->with('success', 'خدمت با موفقیت حذف شد.');
     }
+    public function saveForm(Request $request)
+    {
+        // ذخیره اطلاعات فرم (اینجا ساده، می‌توانی به دلخواه توسعه بدهی)
+        \DB::table('service_dynamic_forms')->insert([
+            'form_data' => json_encode($request->all()),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return response()->json(['success' => true]);
+    }
 }
