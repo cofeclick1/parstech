@@ -4,11 +4,12 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/service-create.css') }}">
+    <!-- استایل FormKit (در صورت نیاز به سفارشی‌سازی می‌توانید حذف کنید) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@formkit/themes@1.0.0-beta.3/genesis/theme.css" />
 @endsection
 
 @section('content')
 <section class="container pt-4">
-
     <div class="row justify-content-center">
         <div class="col-lg-7">
             <div class="card shadow">
@@ -83,15 +84,20 @@
                             </button>
                         </div>
                     </form>
+
+                    <!-- فرم‌ساز داینامیک برای تعریف فرم اختصاصی هر خدمت -->
+                    <hr class="my-4">
+                    <h5 class="mb-3 text-primary">فرم اختصاصی اطلاعات مشتری برای این خدمت (اختیاری):</h5>
+                    <div id="dynamic-service-form"></div>
                 </div>
             </div>
-            <div id="dynamic-service-form"></div>
+
             <div class="alert alert-info mt-4">
                 <strong>راهنما:</strong>
                 <ul class="mb-1">
                     <li>برای خدمات کافی‌نت (مثل ثبت‌نام، پرداخت، تعمیر و...) فقط عنوان و قیمت را وارد کنید، تعداد نیاز نیست.</li>
                     <li>دسته‌بندی و تصویر اختیاری است و برای دسته‌بندی بهتر خدمات می‌توان استفاده کرد.</li>
-                    <li>لیست خدمات پیشنهادی: ثبت‌نام وام، ثبت‌نام خودرو، تمدید بیمه، تعمیرات کامپیوتر و موبایل، پرداخت قبوض و ...</li>
+                    <li>لیست خدمات پیشنهادی: ثبت‌نام وام، ثبت‌نام خودرو، تمدید بیمه، تعمیرات کامپیوتر و موبایل، پرداخت قبوض و...</li>
                 </ul>
             </div>
         </div>
@@ -101,7 +107,7 @@
 
 @section('scripts')
     <script>
-        // مثال برای فیلدهای فرم داینامیک (می‌توانی از دیتابیس هم مقداردهی کنی)
+        // نمونه فیلدهای فرم داینامیک، بعداً می‌توان از دیتابیس خواند
         window.serviceFormFields = [
             { type: 'text', name: 'name', label: 'نام', validation: 'required' },
             { type: 'text', name: 'family', label: 'نام خانوادگی', validation: 'required' },
@@ -117,11 +123,11 @@
         import ServiceForm from '../../js/components/ServiceForm.vue';
 
         const app = createApp({
-          components: { ServiceForm },
-          data() {
-              return { fields: window.serviceFormFields }
-          },
-          template: `<ServiceForm :fields="fields" />`
+            components: { ServiceForm },
+            data() {
+                return { fields: window.serviceFormFields }
+            },
+            template: `<ServiceForm :fields="fields" />`
         });
         app.use(FormKitPlugin, defaultConfig);
         app.mount('#dynamic-service-form');
