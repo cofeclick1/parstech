@@ -12,7 +12,9 @@
         <div class="col-lg-7">
             <div class="card shadow">
                 <div class="card-header bg-info text-white">
-                    <h4 class="mb-0"><i class="fa fa-plus-circle me-2"></i>افزودن خدمت جدید</h4>
+                    <h4 class="mb-0">
+                        <i class="fa fa-plus-circle me-2"></i>افزودن خدمت جدید
+                    </h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -33,17 +35,19 @@
 
                         <!-- عنوان خدمت -->
                         <div class="mb-3">
-                            <label for="title" class="form-label required">عنوان خدمت <span class="text-muted fs-7">(مثال: ثبت‌نام خودرو، پرداخت قبض، تعمیر موبایل)</span></label>
+                            <label for="title" class="form-label required">
+                                عنوان خدمت <span class="text-muted fs-7">(مثال: ثبت‌نام خودرو، پرداخت قبض، تعمیر موبایل، تمدید بیمه و...)</span>
+                            </label>
                             <input type="text" name="title" id="title" class="form-control" required autofocus value="{{ old('title') }}">
                         </div>
 
-                        <!-- دسته‌بندی خدمت -->
+                        <!-- دسته‌بندی خدمت (اختیاری) -->
                         <div class="mb-3">
-                            <label for="category" class="form-label">دسته‌بندی خدمت</label>
-                            <select name="category_id" id="category" class="form-select">
+                            <label for="service_category_id" class="form-label">دسته‌بندی خدمت (اختیاری)</label>
+                            <select name="service_category_id" id="service_category_id" class="form-select">
                                 <option value="">انتخاب کنید</option>
-                                @foreach($categories ?? [] as $cat)
-                                    <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                @foreach($serviceCategories ?? [] as $cat)
+                                    <option value="{{ $cat->id }}" {{ old('service_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -54,19 +58,19 @@
                             <input type="number" name="price" id="price" class="form-control" required min="0" value="{{ old('price') }}">
                         </div>
 
-                        <!-- توضیحات کوتاه -->
+                        <!-- توضیح کوتاه -->
                         <div class="mb-3">
                             <label for="short_description" class="form-label">توضیح کوتاه (اختیاری)</label>
                             <input type="text" name="short_description" id="short_description" class="form-control" maxlength="255" value="{{ old('short_description') }}">
                         </div>
 
-                        <!-- توضیحات کامل -->
+                        <!-- توضیح کامل -->
                         <div class="mb-3">
                             <label for="description" class="form-label">توضیحات کامل (اختیاری)</label>
                             <textarea name="description" id="description" class="form-control" rows="3">{{ old('description') }}</textarea>
                         </div>
 
-                        <!-- آپلود تصویر خدمت (اختیاری) -->
+                        <!-- آپلود تصویر (اختیاری) -->
                         <div class="mb-3">
                             <label for="image" class="form-label">تصویر خدمت (اختیاری)</label>
                             <input type="file" name="image" id="image" class="form-control" accept="image/*">
@@ -80,12 +84,13 @@
                     </form>
                 </div>
             </div>
+
             <div class="alert alert-info mt-4">
                 <strong>راهنما:</strong>
                 <ul class="mb-1">
-                    <li>برای خدمات کافی‌نت و کامپیوتر نیازی به وارد کردن تعداد نیست. فقط عنوان و قیمت را وارد کنید.</li>
-                    <li>در صورت تمایل، توضیحات بیشتر یا تصویر برای خدمت اضافه کنید.</li>
-                    <li>لیست خدمات پیشنهادی: ثبت‌نام وام، ثبت‌نام خودرو، تمدید بیمه، تعمیر سخت‌افزاری و نرم‌افزاری، شارژ سیم‌کارت و...</li>
+                    <li>برای خدمات کافی‌نت (مثل ثبت‌نام، پرداخت، تعمیر و...) فقط عنوان و قیمت را وارد کنید، تعداد نیاز نیست.</li>
+                    <li>دسته‌بندی و تصویر اختیاری است و برای دسته‌بندی بهتر خدمات می‌توان استفاده کرد.</li>
+                    <li>لیست خدمات پیشنهادی: ثبت‌نام وام، ثبت‌نام خودرو، تمدید بیمه، تعمیرات کامپیوتر و موبایل، پرداخت قبوض و ...</li>
                 </ul>
             </div>
         </div>
@@ -94,5 +99,5 @@
 @endsection
 
 @section('scripts')
-    <!-- اگر نیاز به اسکریپت خاصی بود، اینجا اضافه کنید -->
+    <!-- اگر نیاز به اسکریپت خاصی بود اینجا اضافه کنید -->
 @endsection
