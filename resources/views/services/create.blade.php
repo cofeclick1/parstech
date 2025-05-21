@@ -65,6 +65,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <!-- تصویر خدمت -->
                         <div class="mb-3">
                             <label for="image" class="form-label">تصویر خدمت</label>
@@ -77,12 +78,26 @@
                             <input type="text" name="service_info" id="service_info" class="form-control" value="{{ old('service_info') }}">
                         </div>
 
+                        <!-- دسته‌بندی خدمات -->
                         <select name="service_category_id" id="service_category_id" class="form-select">
                             <option value="">انتخاب کنید</option>
                             @foreach($serviceCategories ?? [] as $cat)
                                 <option value="{{ $cat->id }}" {{ old('service_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                             @endforeach
                         </select>
+
+                        <!-- مبلغ فروش خدمت -->
+                        <div class="mb-3">
+                            <label for="price" class="form-label required">مبلغ فروش (تومان)</label>
+                            <input type="number" name="price" id="price" class="form-control" min="0" step="100" required value="{{ old('price') }}">
+                        </div>
+
+                        <!-- واحد خدمت -->
+                        <div class="mb-3">
+                            <label for="unit" class="form-label">واحد خدمت</label>
+                            <input type="text" name="unit" id="unit" class="form-control" value="{{ old('unit') }}" placeholder="مثلاً مورد، ساعت، سرویس">
+                        </div>
+
                         <!-- توضیحات کوتاه -->
                         <div class="mb-3">
                             <label for="short_description" class="form-label">توضیح کوتاه</label>
