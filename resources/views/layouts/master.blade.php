@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{ asset('css/person-create.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    @livewireStyles
     @yield('head')
 </head>
 <body>
@@ -45,5 +46,6 @@
     });
 </script>
 @endif
+@livewireScripts
 </body>
 </html>
