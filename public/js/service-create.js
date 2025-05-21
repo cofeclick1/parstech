@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // تولید خودکار کد خدمات
     const codeInput = document.getElementById('service_code');
     const customSwitch = document.getElementById('custom_code_switch');
-    let baseCode = 'ser' + (10000 + Math.floor(Math.random() * 9000));
+    let baseCode = 'services' + (10000 + Math.floor(Math.random() * 9000));
     codeInput.value = baseCode;
     codeInput.readOnly = true;
 

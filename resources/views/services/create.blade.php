@@ -53,23 +53,18 @@
                         </div>
 
                         <!-- کد خدمت با سوییچ تولید خودکار یا دستی -->
-                        <div x-data="{ customCode: false }">
-                            <label>
-                                <input type="checkbox" x-model="customCode">
-                                کد دلخواه وارد شود
-                            </label>
-                            <div x-show="customCode">
-                                <label for="service_code">کد خدمت</label>
-                                <input type="text" name="service_code" id="service_code" class="form-control" value="{{ old('service_code') }}">
-                                <span>کد دلخواه را وارد کنید</span>
-                            </div>
-                            <div x-show="!customCode">
-                                <label for="service_code_generated">کد خدمت (پیشفرض)</label>
-                                <input type="text" name="service_code_generated" id="service_code_generated" class="form-control" value="{{ $generatedCode ?? '' }}" readonly>
-                                <span>کد پیشفرض به صورت خودکار تولید می‌شود مانند: services-1</span>
+                        <div class="form-group mb-3">
+                            <label for="service_code" class="form-label">کد خدمات</label>
+                            <div class="input-group">
+                                <input type="text" id="service_code" name="service_code" class="form-control" required>
+                                <div class="input-group-append mx-2">
+                                    <label class="form-check-label" for="custom_code_switch">
+                                        کد دلخواه
+                                        <input type="checkbox" id="custom_code_switch" class="form-check-input ms-1">
+                                    </label>
+                                </div>
                             </div>
                         </div>
-
                         <!-- تصویر خدمت -->
                         <div class="mb-3">
                             <label for="image" class="form-label">تصویر خدمت</label>
