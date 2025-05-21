@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#addUnitModal').modal('show');
     });
 
-
     // ثبت واحد (افزودن یا ویرایش)
     document.getElementById('add-unit-form').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -101,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 li.remove();
             }
         }
-                if(e.target.classList.contains('edit-unit-btn')) {
+        if(e.target.classList.contains('edit-unit-btn')) {
             let li = e.target.closest('li');
             let name = li.querySelector('.unit-name').innerText;
             let unitList = document.getElementById('unit-list');
