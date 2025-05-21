@@ -102,6 +102,7 @@
         </div>
     </div>
 </section>
+<livewire:contact-form />
 @endsection
 
 @section('scripts')
