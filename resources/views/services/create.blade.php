@@ -17,6 +17,10 @@
         .modal-backdrop.show {
             opacity: 0.2;
         }
+        .list-group-item .unit-name {
+            min-width: 100px;
+            display: inline-block;
+        }
     </style>
 @endsection
 
@@ -120,6 +124,8 @@
                                 </button>
                             </div>
                         </div>
+                        <!-- لیست واحدها (در مودال نمایش داده می‌شود) -->
+                        <ul id="unit-list" class="list-group mb-3" style="display: none"></ul>
 
                         <!-- توضیحات کوتاه -->
                         <div class="mb-3">
@@ -166,8 +172,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
             </div>
             <div class="modal-body">
-                <input type="text" id="new-unit-input" class="form-control" placeholder="نام واحد جدید" required>
-                <input type="hidden" id="edit-unit-index">
+                <input type="text" id="new-unit-input" class="form-control mb-2" placeholder="نام واحد جدید" required>
+                <input type="hidden" id="edit-unit-id">
+                <ul id="unit-modal-list" class="list-group mt-2"></ul>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
@@ -182,11 +189,10 @@
 <script src="{{ asset('js/service-create.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // مقداردهی اولیه کد خدمت
+    // مقداردهی اولیه کد خدمت (همانند قبل)
     let codeInput = document.getElementById('service_code');
     let customSwitch = document.getElementById('custom_code_switch');
     let loadingCode = false;
-
     function fetchNextCode() {
         if(loadingCode) return;
         loadingCode = true;
@@ -201,11 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 loadingCode = false;
             });
     }
-
-    // مقداردهی اولیه
     fetchNextCode();
-
-    // سوییچ حالت دستی/خودکار
     customSwitch.addEventListener('change', function() {
         if(customSwitch.checked) {
             codeInput.readOnly = false;
