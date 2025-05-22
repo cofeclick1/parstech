@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unit;
 use Illuminate\Http\Request;
+use App\Models\Unit;
 
 class UnitController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate(['title' => 'required|unique:units,title']);
-        $unit = Unit::create(['title' => $request->title]);
-        return response()->json(['id' => $unit->id, 'title' => $unit->title]);
+        $validated = $request->validate([
+            'title' => 'required|string|max:255|unique:units,title'
+        ]);
+
+        $unit = Unit::create([
+            'title' => $validated['title']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'unit' => $unit
+        ]);
     }
 }

@@ -10,11 +10,12 @@
             align-items: center;
             gap: 8px;
         }
-        .code-manual-input {
-            display: none;
+        .input-group .input-group-text {
+            min-width: 110px;
+            justify-content: center;
         }
-        .switch-edit-code input[type="checkbox"]:checked ~ .code-manual-input {
-            display: inline-block;
+        .modal-backdrop.show {
+            opacity: 0.2;
         }
     </style>
 @endsection
@@ -24,7 +25,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow">
-                <div class="card-header bg-info text-white">
+                <div id="service-header" class="card-header bg-info text-white">
                     <h4 class="mb-0">
                         <i class="fa fa-plus-circle me-2"></i>افزودن خدمت جدید
                     </h4>
@@ -56,20 +57,29 @@
                         <div class="form-group mb-3">
                             <label for="service_code" class="form-label">کد خدمات</label>
                             <div class="input-group">
-                                <input type="text" id="service_code" name="service_code" class="form-control" required>
-                                <div class="input-group-append mx-2">
-                                    <label class="form-check-label" for="custom_code_switch">
-                                        کد دلخواه
+                                <input
+                                    type="text"
+                                    id="service_code"
+                                    name="service_code"
+                                    class="form-control"
+                                    required
+                                    value="{{ old('service_code') }}"
+                                >
+                                <span class="input-group-text">
+                                    <label class="switch-edit-code mb-0">
                                         <input type="checkbox" id="custom_code_switch" class="form-check-input ms-1">
+                                        کد دلخواه
                                     </label>
-                                </div>
+                                </span>
                             </div>
+                            <small class="text-muted d-block mt-1">در حالت پیش‌فرض کد به صورت خودکار ساخته می‌شود. برای وارد کردن کد دلخواه، سوییچ را فعال کنید.</small>
                         </div>
 
-                        <!-- تصویر خدمت -->
+                        <!-- تصویر خدمت + پیش‌نمایش -->
                         <div class="mb-3">
                             <label for="image" class="form-label">تصویر خدمت</label>
                             <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                            <img id="image_preview" src="#" alt="پیش نمایش" style="display:none; max-width:150px; margin-top:10px;">
                         </div>
 
                         <!-- اطلاعات خدمات -->
@@ -79,12 +89,15 @@
                         </div>
 
                         <!-- دسته‌بندی خدمات -->
-                        <select name="service_category_id" id="service_category_id" class="form-select">
-                            <option value="">انتخاب کنید</option>
-                            @foreach($serviceCategories ?? [] as $cat)
-                                <option value="{{ $cat->id }}" {{ old('service_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="mb-3">
+                            <label for="service_category_id" class="form-label">دسته‌بندی خدمت</label>
+                            <select name="service_category_id" id="service_category_id" class="form-select">
+                                <option value="">انتخاب کنید</option>
+                                @foreach($serviceCategories ?? [] as $cat)
+                                    <option value="{{ $cat->id }}" {{ old('service_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <!-- مبلغ فروش خدمت -->
                         <div class="mb-3">
@@ -92,10 +105,20 @@
                             <input type="number" name="price" id="price" class="form-control" min="0" step="100" required value="{{ old('price') }}">
                         </div>
 
-                        <!-- واحد خدمت -->
+                        <!-- انتخاب واحد خدمت -->
                         <div class="mb-3">
-                            <label for="unit" class="form-label">واحد خدمت</label>
-                            <input type="text" name="unit" id="unit" class="form-control" value="{{ old('unit') }}" placeholder="مثلاً مورد، ساعت، سرویس">
+                            <label for="unit" class="form-label required">واحد خدمت</label>
+                            <div class="input-group">
+                                <select name="unit" id="unit" class="form-select" required>
+                                    <option value="">انتخاب واحد</option>
+                                    @foreach($units as $unit)
+                                        <option value="{{ $unit }}">{{ $unit }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="button" class="btn btn-outline-primary" id="add-unit-btn">
+                                    افزودن واحد جدید
+                                </button>
+                            </div>
                         </div>
 
                         <!-- توضیحات کوتاه -->
@@ -133,26 +156,81 @@
         </div>
     </div>
 </section>
+
+<!-- Modal افزودن واحد جدید -->
+<div class="modal fade" id="addUnitModal" tabindex="-1" aria-labelledby="addUnitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="add-unit-form" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUnitModalLabel">افزودن واحد جدید</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="new-unit-input" class="form-control" placeholder="نام واحد جدید" required>
+                <input type="hidden" id="edit-unit-index">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                <button type="submit" class="btn btn-primary">ثبت واحد</button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
 <script src="{{ asset('js/service-create.js') }}"></script>
-
 <script>
-    function toggleManualCode(checkbox) {
-        const codeInput = document.getElementById('service_code');
-        const manualInput = document.getElementById('service_code_manual');
-        if (checkbox.checked) {
-            codeInput.readOnly = false;
-            manualInput.disabled = false;
-            manualInput.style.display = 'inline-block';
-            codeInput.style.display = 'none';
-        } else {
-            codeInput.readOnly = true;
-            manualInput.disabled = true;
-            manualInput.style.display = 'none';
-            codeInput.style.display = 'inline-block';
-        }
+document.addEventListener('DOMContentLoaded', function () {
+    // مقداردهی اولیه کد خدمت
+    let codeInput = document.getElementById('service_code');
+    let customSwitch = document.getElementById('custom_code_switch');
+    let loadingCode = false;
+
+    function fetchNextCode() {
+        if(loadingCode) return;
+        loadingCode = true;
+        fetch('/services/next-code')
+            .then(res => res.json())
+            .then(data => {
+                codeInput.value = data.code;
+                codeInput.readOnly = true;
+                loadingCode = false;
+            }).catch(() => {
+                codeInput.value = '';
+                loadingCode = false;
+            });
     }
+
+    // مقداردهی اولیه
+    fetchNextCode();
+
+    // سوییچ حالت دستی/خودکار
+    customSwitch.addEventListener('change', function() {
+        if(customSwitch.checked) {
+            codeInput.readOnly = false;
+            codeInput.value = '';
+            codeInput.focus();
+        } else {
+            fetchNextCode();
+        }
+    });
+
+    // پیش‌نمایش تصویر
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('image_preview');
+    if(imageInput && imagePreview){
+        imageInput.addEventListener('change', function() {
+            if (imageInput.files && imageInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.style.display = "block";
+                    imagePreview.src = e.target.result;
+                }
+                reader.readAsDataURL(imageInput.files[0]);
+            }
+        });
+    }
+});
 </script>
 @endsection

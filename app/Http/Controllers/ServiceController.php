@@ -51,18 +51,18 @@ class ServiceController extends Controller
         return response()->json($results);
     }
 
-
     public function nextCode()
     {
-        $last = Service::where('service_code', 'like', 'ser%')
-            ->orderByRaw('CAST(SUBSTRING(service_code, 4) AS UNSIGNED) DESC')
+        // همه کدهایی که با services- شروع می‌شوند را بگیر
+        $last = Service::where('service_code', 'like', 'services-%')
+            ->orderByRaw('CAST(SUBSTRING(service_code, 10) AS UNSIGNED) DESC')
             ->first();
-        if($last && preg_match('/^ser(\d+)$/', $last->service_code, $m)) {
+        if ($last && preg_match('/^services-(\d+)$/', $last->service_code, $m)) {
             $next = intval($m[1]) + 1;
         } else {
-            $next = 10001;
+            $next = 1001;
         }
-        return response()->json(['code' => 'ser' . $next]);
+        return response()->json(['code' => 'services-' . $next]);
     }
 
     /**
@@ -71,10 +71,7 @@ class ServiceController extends Controller
     public function create()
     {
         $serviceCategories = Category::where('category_type', 'service')->get();
-        $units = Service::select('unit')->distinct()->pluck('unit')->toArray();
-        if (empty($units)) {
-            $units = ['ساعت', 'روز', 'عدد'];
-        }
+        $units = Unit::orderBy('title')->get(); // واحدها از جدول units
         return view('services.create', compact('serviceCategories', 'units'));
     }
 
@@ -87,7 +84,7 @@ class ServiceController extends Controller
             'title' => 'required|string|max:255',
             'service_code' => 'required|string|max:255|unique:services,service_code',
             'service_category_id' => 'nullable|exists:categories,id',
-            'unit' => 'nullable|string|max:255',
+            'unit_id' => 'required|exists:units,id',
             'price' => 'nullable|numeric',
             'tax' => 'nullable|numeric',
             'execution_cost' => 'nullable|numeric',
@@ -119,10 +116,7 @@ class ServiceController extends Controller
     {
         $service = Service::findOrFail($id);
         $serviceCategories = Category::where('category_type', 'service')->get();
-        $units = Service::select('unit')->distinct()->pluck('unit')->toArray();
-        if (empty($units)) {
-            $units = ['ساعت', 'روز', 'عدد'];
-        }
+        $units = Unit::orderBy('title')->get();
         return view('services.edit', compact('service', 'serviceCategories', 'units'));
     }
 
@@ -137,13 +131,13 @@ class ServiceController extends Controller
             'title'        => 'required|string|max:255',
             'service_code' => 'required|string|max:255|unique:services,service_code,' . $service->id,
             'service_category_id' => 'nullable|exists:categories,id',
-            'unit'        => 'nullable|string|max:255',
+            'unit_id'        => 'required|exists:units,id',
             'price'       => 'nullable|numeric',
             'is_active'   => 'nullable|boolean',
         ]);
 
         $data = $request->only([
-            'title', 'service_code', 'service_category_id', 'unit', 'price', 'is_active'
+            'title', 'service_code', 'service_category_id', 'unit_id', 'price', 'is_active'
         ]);
         if (!isset($data['is_active'])) $data['is_active'] = true;
 
@@ -161,14 +155,6 @@ class ServiceController extends Controller
         $service->delete();
         return redirect()->route('services.index')->with('success', 'خدمت با موفقیت حذف شد.');
     }
-    public function saveForm(Request $request)
-    {
-        // ذخیره اطلاعات فرم (اینجا ساده، می‌توانی به دلخواه توسعه بدهی)
-        \DB::table('service_dynamic_forms')->insert([
-            'form_data' => json_encode($request->all()),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        return response()->json(['success' => true]);
-    }
+
+    // سایر متدها مثل saveForm ...
 }
