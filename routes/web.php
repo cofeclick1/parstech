@@ -90,21 +90,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Sales
     Route::prefix('sales')->name('sales.')->group(function () {
-        Route::get('/', [SalesController::class, 'index'])->name('index');
-        Route::get('/create', [SalesController::class, 'create'])->name('create');
-        Route::post('/', [SalesController::class, 'store'])->name('store');
-        Route::get('/returns', [SalesController::class, 'returns'])->name('returns');
-        Route::post('/returns', [SalesController::class, 'storeReturn'])->name('returns.store');
+        Route::get('/', [SaleController::class, 'index'])->name('index');
+        Route::get('/create', [SaleController::class, 'create'])->name('create');
+        Route::post('/', [SaleController::class, 'store'])->name('store');
+        Route::get('/returns', [SaleController::class, 'returns'])->name('returns');
+        Route::post('/returns', [SaleController::class, 'storeReturn'])->name('returns.store');
 
-
-
-
-
-            // فروش سریع
-    Route::get('/quick', [SalesController::class, 'quickForm'])->name('quick');
-    Route::post('/quick/store', [SalesController::class, 'quickStore'])->name('quick.store');
-
-
+        // فروش سریع
+        Route::get('/quick', [SaleController::class, 'quickForm'])->name('quick');
+        Route::post('/quick/store', [SaleController::class, 'quickStore'])->name('quick.store');
     });
 
     // Accounting

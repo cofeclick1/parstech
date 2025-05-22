@@ -1,193 +1,176 @@
 @extends('layouts.app')
 
-@section('head')
-    <title>فروش سریع</title>
-    <link rel="stylesheet" href="{{ asset('css/products-list.css') }}">
-    <style>
-        .quick-sale-title { font-size: 1.5rem; font-weight: bold; }
-        .quick-sale-form .form-control { font-size: 1rem; }
-    </style>
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/persian-datepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/persianDatepicker-melon.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sales-invoice.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sales-create.css') }}">
 @endsection
 
 @section('content')
-<div class="container py-4">
-    <div class="card shadow">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <span class="quick-sale-title">ثبت فروش سریع</span>
-            <a href="{{ route('sales.index') }}" class="btn btn-outline-primary btn-sm">لیست فاکتورها</a>
-        </div>
-        <div class="card-body">
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    @foreach($errors->all() as $e)
-                        <div>{{ $e }}</div>
-                    @endforeach
-                </div>
-            @endif
+<div class="sales-create-container">
+    <div class="sales-create-header animate-fade-in">
+        <h2><i class="fa fa-bolt"></i> فروش سریع</h2>
+    </div>
 
-            <form id="quick-sale-form" class="quick-sale-form" method="POST" action="{{ route('sales.quick.store') }}">
-                @csrf
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>شماره فاکتور</label>
-                        <input type="text" name="invoice_number" class="form-control" value="{{ $nextNumber }}" readonly>
+    @if(session('success'))
+        <div class="alert alert-success animate-fade-in">{{ session('success') }}</div>
+    @endif
+    @if($errors->any())
+        <div class="alert alert-danger animate-fade-in">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form id="quick-sale-form" class="animate-fade-in" autocomplete="off" method="POST" action="{{ route('sales.quick.store') }}">
+        @csrf
+
+        <!-- بخش اول: اطلاعات اولیه فاکتور -->
+        <div class="invoice-section">
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label required">شماره فاکتور</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="invoice_number" id="invoice_number"
+                                   value="{{ old('invoice_number', $nextNumber ?? '') }}" readonly required>
+                            <span class="input-group-text">
+                                <label class="form-switch mb-0">
+                                    <input type="checkbox" id="invoiceNumberSwitch" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </span>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <label>فروشنده</label>
-                        <select name="seller_id" class="form-control" required>
-                            <option value="">انتخاب کنید...</option>
-                            @foreach($sellers as $seller)
-                                <option value="{{ $seller->id }}" {{ old('seller_id') == $seller->id ? 'selected' : '' }}>
-                                    {{ $seller->first_name . ' ' . $seller->last_name }}
-                                </option>
-                            @endforeach
-                        </select>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label">شماره ارجاع</label>
+                        <input type="text" class="form-control" name="reference" id="reference"
+                               value="{{ old('reference') }}" placeholder="شماره ارجاع...">
                     </div>
-                    <div class="col-md-4">
-                        <label>واحد پول</label>
-                        <select name="currency_id" class="form-control" required>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="form-label required">تاریخ صدور</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="issued_at_jalali" id="issued_at_jalali"
+                                   value="{{ old('issued_at_jalali') }}" readonly>
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label required">واحد پول</label>
+                        <select class="form-select" name="currency_id" id="currency_id" required>
                             <option value="">انتخاب کنید...</option>
                             @foreach($currencies as $currency)
                                 <option value="{{ $currency->id }}" {{ old('currency_id') == $currency->id ? 'selected' : '' }}>
-                                    {{ $currency->title }}
+                                    {{ $currency->name }} - {{ $currency->code }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                 </div>
-
-                {{-- محصولات و خدمات --}}
-                <div class="mb-3">
-                    <label for="products_input">انتخاب محصولات/خدمات</label>
-                    <div id="products-area">
-                        <table class="table table-bordered table-sm" id="products-table">
-                            <thead>
-                                <tr>
-                                    <th>نام</th>
-                                    <th>تعداد</th>
-                                    <th>قیمت واحد</th>
-                                    <th>تخفیف</th>
-                                    <th>مالیات (%)</th>
-                                    <th>جمع کل</th>
-                                    <th>حذف</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- ردیف‌های محصولات اینجا اضافه می‌شود -->
-                            </tbody>
-                        </table>
-                        <button type="button" class="btn btn-outline-info btn-sm" id="add-product-btn">افزودن محصول/خدمت</button>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="form-label required">فروشنده</label>
+                        <select class="form-select" name="seller_id" id="seller_id" required>
+                            <option value="">انتخاب کنید...</option>
+                            @foreach($sellers as $seller)
+                                <option value="{{ $seller->id }}" {{ old('seller_id') == $seller->id ? 'selected' : '' }}>
+                                    {{ $seller->seller_code ?? '' }} - {{ $seller->first_name }} {{ $seller->last_name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <input type="hidden" name="products_input" id="products_input" value="{{ old('products_input') }}">
                 </div>
-
-                <div class="mb-3">
-                    <label>توضیحات فاکتور (اختیاری)</label>
-                    <input type="text" name="title" class="form-control" maxlength="100" value="{{ old('title') }}">
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-success px-5 py-2">ثبت فروش سریع</button>
-                    <a href="{{ route('sales.index') }}" class="btn btn-secondary">بازگشت</a>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+
+        <!-- بخش دوم: عنوان فاکتور -->
+        <div class="invoice-section mt-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">عنوان فاکتور (اختیاری)</label>
+                        <input type="text" class="form-control" name="title" id="invoice_title"
+                               placeholder="عنوان فاکتور..." value="{{ old('title') }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- بخش سوم: محصولات و خدمات -->
+        <div class="invoice-section mt-4">
+            @include('sales.partials.product_list')
+        </div>
+
+        <!-- بخش چهارم: جدول اقلام فاکتور -->
+        <div class="invoice-section mt-4">
+            @include('sales.partials.invoice_items_table')
+        </div>
+
+        <input type="hidden" name="products_input" id="products_input" value="{{ old('products_input') }}">
+
+        <!-- جمع کل و دکمه ثبت -->
+        <div class="invoice-footer mt-4">
+            <div class="row align-items-center">
+                <div class="col-md-9">
+                    <div class="invoice-totals">
+                        <div class="total-item">
+                            <div class="total-label">تعداد کل:</div>
+                            <div class="total-value" id="total_count">۰</div>
+                        </div>
+                        <div class="total-item">
+                            <div class="total-label">مبلغ کل:</div>
+                            <div class="total-value grand-total" id="total_amount">۰ ریال</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-end">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fa fa-bolt"></i>
+                        ثبت فروش سریع
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 @endsection
 
 @section('scripts')
-<script>
-    // محصولات و خدمات برای انتخاب سریع (داده‌ها را از سرور به JS منتقل می‌کنیم)
-    const productsList = @json($products);
-    const servicesList = @json($services);
-
-    // اضافه کردن ردیف جدید
-    function addRow(product = null) {
-        let tbody = $('#products-table tbody');
-        let rowIdx = tbody.children().length;
-        let row = `<tr>
-            <td>
-                <select class="form-select product-select" style="min-width:120px">
-                    <option value="">انتخاب...</option>
-                    ${productsList.map(p => `<option value="${p.id}" data-price="${p.sell_price}">${p.name}</option>`).join('')}
-                    <option disabled>----- خدمات -----</option>
-                    ${servicesList.map(s => `<option value="${s.id}" data-price="${s.sell_price}">${s.name}</option>`).join('')}
-                </select>
-            </td>
-            <td><input type="number" class="form-control count-input" min="1" value="1" style="width: 70px"></td>
-            <td><input type="number" class="form-control price-input" min="0" value="0" style="width: 100px"></td>
-            <td><input type="number" class="form-control discount-input" min="0" value="0" style="width: 80px"></td>
-            <td><input type="number" class="form-control tax-input" min="0" value="0" style="width: 70px"></td>
-            <td class="total-cell text-nowrap">0</td>
-            <td><button type="button" class="btn btn-danger btn-sm delete-row-btn">حذف</button></td>
-        </tr>`;
-        tbody.append(row);
-    }
-
-    // مقداردهی اولیه
-    $(document).ready(function(){
-        $('#add-product-btn').on('click', function(e){
-            addRow();
-        });
-
-        // حذف ردیف
-        $('#products-table').on('click', '.delete-row-btn', function(){
-            $(this).closest('tr').remove();
-            updateProductsInput();
-        });
-
-        // تغییرات روی هر سلول
-        $('#products-table').on('change', 'select, input', function(){
-            let tr = $(this).closest('tr');
-            updateRowTotal(tr);
-            updateProductsInput();
-        });
-
-        // مقدار پیشفرض: یک ردیف داشته باشیم
-        if($('#products-table tbody tr').length === 0) addRow();
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/persian-date.min.js') }}"></script>
+    <script src="{{ asset('js/persian-datepicker.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/sales-invoice.js') }}"></script>
+    <script>
+    $(function() {
+        // تاریخ فاکتور به شمسی و ساعت
+        if (typeof persianDate !== "undefined") {
+            var now = new persianDate();
+            var jalali = now.format('YYYY/MM/DD HH:mm');
+            $('#issued_at_jalali').val(jalali);
+        } else {
+            var date = new Date();
+            var pad = n => n < 10 ? '0'+n : n;
+            var miladi = date.getFullYear() + '-' + pad(date.getMonth()+1) + '-' + pad(date.getDate()) +
+                ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+            $('#issued_at_jalali').val(miladi);
+        }
+        $('#issued_at_jalali').prop('readonly', true).css('background', '#eee').css('cursor', 'not-allowed');
     });
-
-    function updateRowTotal(tr) {
-        let count = parseFloat(tr.find('.count-input').val()) || 1;
-        let price = parseFloat(tr.find('.price-input').val()) || 0;
-        let discount = parseFloat(tr.find('.discount-input').val()) || 0;
-        let tax = parseFloat(tr.find('.tax-input').val()) || 0;
-        let subtotal = count * price;
-        let taxed = (subtotal - discount) * (tax / 100);
-        let total = subtotal - discount + taxed;
-        tr.find('.total-cell').text(total.toLocaleString());
-    }
-
-    function updateProductsInput() {
-        let data = [];
-        $('#products-table tbody tr').each(function(){
-            let tr = $(this);
-            let productId = tr.find('.product-select').val();
-            if(!productId) return;
-            let count = parseInt(tr.find('.count-input').val()) || 1;
-            let price = parseInt(tr.find('.price-input').val()) || 0;
-            let discount = parseInt(tr.find('.discount-input').val()) || 0;
-            let tax = parseFloat(tr.find('.tax-input').val()) || 0;
-            data.push({
-                id: productId,
-                count: count,
-                sell_price: price,
-                discount: discount,
-                tax: tax
-            });
-        });
-        $('#products_input').val(JSON.stringify(data));
-    }
-
-    // پر کردن قیمت واحد هنگام انتخاب محصول
-    $('#products-table').on('change', '.product-select', function(){
-        let price = $(this).find(':selected').data('price') || 0;
-        let tr = $(this).closest('tr');
-        tr.find('.price-input').val(price);
-        updateRowTotal(tr);
-        updateProductsInput();
-    });
-
-</script>
+    </script>
 @endsection
