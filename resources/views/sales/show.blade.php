@@ -256,21 +256,7 @@
                 </div>
             </div>
         </div>
-        @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
-@if(session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-@endif
-@if($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+        
         <!-- فرم پرداخت و ویرایش -->
         <div class="summary-card">
             <h3 class="summary-title">ثبت یا ویرایش پرداخت</h3>
