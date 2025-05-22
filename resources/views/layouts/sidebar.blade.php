@@ -6,12 +6,31 @@
     </a>
     <div class="sidebar" style="overflow-y:auto;max-height:calc(100vh - 60px);">
         @auth
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{ asset('img/user.png') }}" class="img-circle elevation-2" alt="User Image">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex flex-column align-items-start">
+            <div class="d-flex align-items-center w-100">
+                <div class="image">
+                    <img src="{{ asset('img/user.png') }}" class="img-circle elevation-2" alt="User Image">
+                </div>
+                <div class="info w-100">
+                    <a href="#" class="d-block" id="userMenuToggle" style="cursor:pointer;">
+                        {{ Auth::user()->name ?? 'کاربر' }} <i class="fas fa-angle-down"></i>
+                    </a>
+                </div>
             </div>
-            <div class="info">
-                <a href="#" class="d-block">{{ Auth::user()->name ?? 'کاربر' }}</a>
+            <div id="userMenuDropdown" class="list-group w-100 mt-1" style="display:none;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:999;">
+                <a class="list-group-item list-group-item-action" href="#" data-toggle="modal" data-target="#editProfileModal">
+                    <i class="fas fa-user-edit"></i> ویرایش پروفایل
+                </a>
+                <a class="list-group-item list-group-item-action" href="#" data-toggle="modal" data-target="#changePasswordModal">
+                    <i class="fas fa-key"></i> تغییر رمز عبور
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="list-group-item list-group-item-action text-danger" href="#" onclick="event.preventDefault();document.getElementById('logout-form-sidebar').submit();">
+                    <i class="fas fa-sign-out-alt"></i> خروج
+                </a>
+                <form method="POST" action="{{ route('logout') }}" id="logout-form-sidebar" style="display: none;">
+                    @csrf
+                </form>
             </div>
         </div>
         @endauth
@@ -300,7 +319,7 @@
                     </ul>
                 </li>
                 {{-- خروج --}}
-                <li class="nav-item">
+                <li class="nav-item d-none">
                     <form method="POST" action="{{ route('logout') }}" id="logout-form">
                         @csrf
                         <a href="#" class="nav-link" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
@@ -313,6 +332,41 @@
         </nav>
     </div>
 </aside>
+
+<!-- Modal برای ویرایش پروفایل -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">ویرایش پروفایل</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="بستن">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @include('profile.partials.update-profile-information-form')
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal برای تغییر رمز عبور -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">تغییر رمز عبور</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="بستن">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @include('profile.partials.update-password-form')
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .nav-treeview .nav-link.active,
     .nav-treeview .nav-link.active:focus,
@@ -335,22 +389,38 @@
         background: #222d32;
     }
 </style>
-<!-- اگر AdminLTE به درستی در پروژه شما لود شده باشد نیازی به کد JS نیست -->
 <script>
     // فعالسازی آکاردئون واقعی با بستن منوی قبلی
     document.addEventListener("DOMContentLoaded", function () {
         const sidebarMenu = document.getElementById("sidebar-menu");
-        sidebarMenu.querySelectorAll('.has-treeview > a').forEach(function(menuLink){
-            menuLink.addEventListener('click', function(e){
-                e.preventDefault();
-                const parentLi = menuLink.parentElement;
-                // بستن همه منوها به جز منوی جاری
-                sidebarMenu.querySelectorAll('.has-treeview.menu-open').forEach(function(openLi){
-                    if(openLi !== parentLi) openLi.classList.remove('menu-open');
+        if(sidebarMenu){
+            sidebarMenu.querySelectorAll('.has-treeview > a').forEach(function(menuLink){
+                menuLink.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const parentLi = menuLink.parentElement;
+                    // بستن همه منوها به جز منوی جاری
+                    sidebarMenu.querySelectorAll('.has-treeview.menu-open').forEach(function(openLi){
+                        if(openLi !== parentLi) openLi.classList.remove('menu-open');
+                    });
+                    parentLi.classList.toggle('menu-open');
                 });
-                parentLi.classList.toggle('menu-open');
             });
-        });
+        }
     });
-    
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('userMenuToggle');
+        const menu = document.getElementById('userMenuDropdown');
+        if(toggle && menu) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+            });
+            // بستن منو موقع کلیک بیرون از منو
+            document.addEventListener('click', function(e) {
+                if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+                    menu.style.display = 'none';
+                }
+            });
+        }
+    });
 </script>
