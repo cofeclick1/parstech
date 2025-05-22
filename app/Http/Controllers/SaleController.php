@@ -104,8 +104,8 @@ class SaleController extends Controller
     public function create()
     {
         $sellers = \App\Models\Seller::all();
-        $products = \App\Models\Product::with('category')->get();
-        $services = \App\Models\Service::with('category')->get();
+        $products = \App\Models\Product::with('category')->where('type', 'product')->get();
+        $services = \App\Models\Product::with('category')->where('type', 'service')->get(); // تغییر این خط
         $currencies = \App\Models\Currency::all();
         $customers = \App\Models\Person::all();
 

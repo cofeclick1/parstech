@@ -104,7 +104,14 @@ class ServiceController extends Controller
             $validated['image'] = $request->file('image')->store('services', 'public');
         }
 
-        Service::create($validated);
+        // واحد باید از unit_id بیاد
+        $unit = \App\Models\Unit::find($validated['unit_id']);
+        $validated['unit'] = $unit ? $unit->title : null;
+
+        $service = Service::create($validated);
+
+        // محصول معادل بساز
+        $service->createOrUpdateProduct();
 
         return redirect()->route('services.index')->with('success', 'خدمات با موفقیت ثبت شد.');
     }
@@ -141,7 +148,14 @@ class ServiceController extends Controller
         ]);
         if (!isset($data['is_active'])) $data['is_active'] = true;
 
+        // واحد باید از unit_id بیاد
+        $unit = \App\Models\Unit::find($data['unit_id']);
+        $data['unit'] = $unit ? $unit->title : null;
+
         $service->update($data);
+
+        // محصول معادل بروزرسانی شود
+        $service->createOrUpdateProduct();
 
         return redirect()->route('services.index')->with('success', 'خدمت با موفقیت ویرایش شد.');
     }
