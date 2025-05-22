@@ -1,14 +1,11 @@
-
-
-
-
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="overflow:hidden;">
+    <!-- برند و لوگو -->
     <a href="{{ url('/') }}" class="brand-link">
         <img src="{{ asset('img/logo.png') }}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">سیستم حسابداری و فروش</span>
     </a>
-
-    <div class="sidebar">
+    <div class="sidebar" style="overflow-y:auto;max-height:calc(100vh - 60px);">
+        @auth
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
                 <img src="{{ asset('img/user.png') }}" class="img-circle elevation-2" alt="User Image">
@@ -17,9 +14,14 @@
                 <a href="#" class="d-block">{{ Auth::user()->name ?? 'کاربر' }}</a>
             </div>
         </div>
+        @endauth
 
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column"
+                data-widget="treeview"
+                role="menu"
+                data-accordion="true"
+                id="sidebar-menu">
                 {{-- داشبورد --}}
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -27,9 +29,11 @@
                         <p>داشبورد</p>
                     </a>
                 </li>
-
-                <li class="nav-item has-treeview {{ request()->is('products*') || request()->is('stocks*') || request()->is('categories*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('products*') || request()->is('stocks*') || request()->is('categories*') ? 'active' : '' }}">
+                {{-- کالا و خدمات --}}
+                <li class="nav-item has-treeview
+                    {{ (request()->is('products*') || request()->is('stocks*') || request()->is('categories*') || request()->is('services*')) ? 'menu-open' : '' }}">
+                    <a href="#"
+                        class="nav-link {{ (request()->is('products*') || request()->is('stocks*') || request()->is('categories*') || request()->is('services*')) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-warehouse"></i>
                         <p>
                             کالا و خدمات
@@ -37,63 +41,54 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        {{-- افزودن محصول --}}
                         <li class="nav-item">
                             <a href="{{ route('products.create') }}" class="nav-link {{ request()->routeIs('products.create') ? 'active' : '' }}">
                                 <i class="fas fa-plus nav-icon text-success"></i>
                                 <p>افزودن محصول</p>
                             </a>
                         </li>
-                        {{-- لیست محصولات --}}
                         <li class="nav-item">
                             <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}">
                                 <i class="fas fa-box nav-icon"></i>
                                 <p>لیست محصولات</p>
                             </a>
                         </li>
-                        {{-- افزودن خدمت --}}
                         <li class="nav-item">
                             <a href="{{ route('services.create') }}" class="nav-link {{ request()->routeIs('services.create') ? 'active' : '' }}">
                                 <i class="fas fa-plus nav-icon text-info"></i>
                                 <p>افزودن خدمات</p>
                             </a>
                         </li>
-                        {{-- لیست محصولات --}}
                         <li class="nav-item">
                             <a href="{{ route('services.index') }}" class="nav-link {{ request()->routeIs('services.index') ? 'active' : '' }}">
                                 <i class="fas fa-box nav-icon"></i>
                                 <p>لیست خدمات</p>
                             </a>
                         </li>
-                        {{-- ورود کالا --}}
                         <li class="nav-item">
                             <a href="{{ route('stocks.in') }}" class="nav-link {{ request()->routeIs('stocks.in') ? 'active' : '' }}">
                                 <i class="fas fa-arrow-down nav-icon"></i>
                                 <p>ورود کالا</p>
                             </a>
                         </li>
-                        {{-- خروج کالا --}}
                         <li class="nav-item">
                             <a href="{{ route('stocks.out') }}" class="nav-link {{ request()->routeIs('stocks.out') ? 'active' : '' }}">
                                 <i class="fas fa-arrow-up nav-icon"></i>
                                 <p>خروج کالا</p>
                             </a>
                         </li>
-                        {{-- انتقال بین انبارها --}}
                         <li class="nav-item">
                             <a href="{{ route('stocks.transfer') }}" class="nav-link {{ request()->routeIs('stocks.transfer') ? 'active' : '' }}">
                                 <i class="fas fa-exchange-alt nav-icon"></i>
                                 <p>انتقال بین انبارها</p>
                             </a>
                         </li>
-                        {{-- دسته‌بندی --}}
                         <li class="nav-item">
                             <a href="{{ route('categories.create') }}" class="nav-link {{ request()->routeIs('categories.create') ? 'active' : '' }}">
                                 <i class="fas fa-tags nav-icon"></i>
                                 <p>دسته‌بندی</p>
                             </a>
                         </li>
-                        {{-- لیست دسته‌بندی --}}
                         <li class="nav-item">
                             <a href="{{ route('categories.index') }}" class="nav-link {{ request()->routeIs('categories.index') ? 'active' : '' }}">
                                 <i class="fas fa-list-ul nav-icon"></i>
@@ -102,7 +97,6 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- اشخاص --}}
                 <li class="nav-item has-treeview {{ request()->is('persons*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('persons*') ? 'active' : '' }}">
@@ -119,36 +113,30 @@
                                 <p>شخص جدید</p>
                             </a>
                         </li>
-                        {{-- لیست اشخاص --}}
                         <li class="nav-item">
                             <a href="{{ route('persons.index') }}" class="nav-link {{ request()->routeIs('persons.index') ? 'active' : '' }}">
                                 <i class="fas fa-list nav-icon"></i>
                                 <p>لیست اشخاص</p>
                             </a>
                         </li>
-                            {{-- منوی سهامداران --}}
                         <li class="nav-item">
                             <a href="{{ route('shareholders.index') }}" class="nav-link {{ request()->routeIs('shareholders.*') ? 'active' : '' }}">
                                 <i class="fas fa-user-shield nav-icon"></i>
                                 <p>سهامداران</p>
                             </a>
                         </li>
-                        {{-- منوی مشتریان --}}
                         <li class="nav-item">
                             <a href="{{ route('sellers.create') }}" class="nav-link {{ request()->routeIs('sellers.create') ? 'active' : '' }}">
                                 <i class="fas fa-store nav-icon"></i>
                                 <p>فروشنده جدید</p>
                             </a>
                         </li>
-                        {{-- لیست فروشنده --}}
                         <li class="nav-item">
                             <a href="{{ route('sellers.index') }}" class="nav-link {{ request()->routeIs('sellers.index') ? 'active' : '' }}">
                                 <i class="fas fa-user-tie nav-icon"></i>
                                 <p>لیست فروشندگان</p>
                             </a>
                         </li>
-                        {{-- صفحه فروشنده --}}
-
                         <li class="nav-item">
                             <a href="{{ route('persons.suppliers') }}" class="nav-link {{ request()->routeIs('persons.suppliers') ? 'active' : '' }}">
                                 <i class="fas fa-truck nav-icon"></i>
@@ -157,10 +145,9 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- فروش --}}
-                <li class="nav-item has-treeview ...">
-                    <a href="#" class="nav-link ...">
+                <li class="nav-item has-treeview {{ request()->is('sales*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('sales*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>
                             فروش
@@ -169,16 +156,15 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('sales.create') }}" class="nav-link ...">
+                            <a href="{{ route('sales.create') }}" class="nav-link {{ request()->routeIs('sales.create') ? 'active' : '' }}">
                                 <p>ثبت فروش جدید</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('sales.index') }}" class="nav-link ...">
+                            <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
                                 <p>لیست فاکتورها</p>
                             </a>
                         </li>
-                        <!-- اینجا زیرمنوی جدید فروش سریع را اضافه می‌کنیم -->
                         <li class="nav-item">
                             <a href="{{ route('sales.quick') }}" class="nav-link {{ request()->routeIs('sales.quick') ? 'active' : '' }}">
                                 <i class="fas fa-bolt nav-icon text-warning"></i>
@@ -187,7 +173,6 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- حسابداری --}}
                 <li class="nav-item has-treeview {{ request()->is('accounting*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('accounting*') ? 'active' : '' }}">
@@ -218,7 +203,6 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- امور مالی --}}
                 <li class="nav-item has-treeview {{ request()->is('financial*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('financial*') ? 'active' : '' }}">
@@ -255,14 +239,6 @@
                         </li>
                     </ul>
                 </li>
-
-
-
-                                                {{-- مدیریت انبار --}}
-
-
-
-
                 {{-- گزارشات --}}
                 <li class="nav-item has-treeview {{ request()->is('reports*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('reports*') ? 'active' : '' }}">
@@ -293,7 +269,6 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- تنظیمات --}}
                 <li class="nav-item has-treeview {{ request()->is('settings*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('settings*') ? 'active' : '' }}">
@@ -324,7 +299,6 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- خروج --}}
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}" id="logout-form">
@@ -339,3 +313,44 @@
         </nav>
     </div>
 </aside>
+<style>
+    .nav-treeview .nav-link.active,
+    .nav-treeview .nav-link.active:focus,
+    .nav-treeview .nav-link.active:hover {
+        background-color: #204d74 !important;
+        color: #fff !important;
+    }
+    .sidebar {
+        scrollbar-width: thin;
+        scrollbar-color: #888 #222d32;
+    }
+    .sidebar::-webkit-scrollbar {
+        width: 7px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+        background: #222d32;
+    }
+</style>
+<!-- اگر AdminLTE به درستی در پروژه شما لود شده باشد نیازی به کد JS نیست -->
+<script>
+    // فعالسازی آکاردئون واقعی با بستن منوی قبلی
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebarMenu = document.getElementById("sidebar-menu");
+        sidebarMenu.querySelectorAll('.has-treeview > a').forEach(function(menuLink){
+            menuLink.addEventListener('click', function(e){
+                e.preventDefault();
+                const parentLi = menuLink.parentElement;
+                // بستن همه منوها به جز منوی جاری
+                sidebarMenu.querySelectorAll('.has-treeview.menu-open').forEach(function(openLi){
+                    if(openLi !== parentLi) openLi.classList.remove('menu-open');
+                });
+                parentLi.classList.toggle('menu-open');
+            });
+        });
+    });
+    
+</script>

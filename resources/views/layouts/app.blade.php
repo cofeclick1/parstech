@@ -14,6 +14,9 @@
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
     <!-- Persian DateTimePicker (فایل css را دانلود کن و در public/css قرار بده) -->
     <link rel="stylesheet" href="{{ asset('css/mds.bs.datetimepicker.style.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
     @livewireStyles
     @yield('head')
     @stack('styles')
@@ -84,6 +87,10 @@
     <script src="{{ asset('js/mds.bs.datetimepicker.js') }}"></script>
     <script src="{{ asset('js/currency-modal.js') }}"></script>
     <script src="{{ asset('js/sidebar-custom.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     @yield('scripts')
     @stack('scripts')
     @livewireScripts
