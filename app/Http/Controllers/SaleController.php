@@ -16,6 +16,14 @@ use PDF;
 
 class SaleController extends Controller
 {
+
+    public function nextInvoiceNumber()
+    {
+        $last = Sale::orderByDesc('invoice_number')->first();
+        $next = $last && $last->invoice_number ? $last->invoice_number + 1 : 1001;
+        return response()->json(['invoice_number' => $next]);
+    }
+
     public function print(Sale $sale)
     {
         $sale->load(['customer', 'seller', 'items.product']);

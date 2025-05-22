@@ -36,15 +36,17 @@ class ServiceController extends Controller
         $services = $query->limit($limit)->get();
 
         $results = $services->map(function ($service) {
+            // محصول معادل را پیدا کن
+            $product = \App\Models\Product::where('code', $service->service_code)->first();
             return [
-                'id'         => $service->id,
+                'id'         => $product ? $product->id : null, // این id باید id محصول باشد!
                 'code'       => $service->service_code,
                 'name'       => $service->title,
                 'category'   => $service->category ? $service->category->name : '-',
                 'unit'       => $service->unit,
                 'sell_price' => $service->price,
                 'description'=> $service->short_description ?? $service->description,
-                'stock'      => 1, // خدمات موجودی ندارد، فقط برای سازگاری با کد JS
+                'stock'      => 1,
             ];
         });
 

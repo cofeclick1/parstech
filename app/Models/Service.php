@@ -25,14 +25,25 @@ class Service extends Model
         'is_active',
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(\App\Models\Category::class, 'service_category_id');
+    }
+
     public function createOrUpdateProduct()
     {
-        \App\Models\Product::updateOrCreate(
+        $categoryId = $this->service_category_id;
+        if (empty($categoryId)) {
+            $defaultCategory = \App\Models\Category::where('category_type', 'service')->first();
+            $categoryId = $defaultCategory ? $defaultCategory->id : 1;
+        }
+
+        $product = \App\Models\Product::updateOrCreate(
             ['code' => $this->service_code],
             [
                 'name'        => $this->title,
                 'code'        => $this->service_code,
-                'category_id' => $this->service_category_id,
+                'category_id' => $categoryId,
                 'image'       => $this->image,
                 'short_desc'  => $this->short_description,
                 'description' => $this->description,
@@ -42,5 +53,11 @@ class Service extends Model
                 'is_active'   => $this->is_active,
             ]
         );
+
+        // ذخیره id محصول معادل (در صورت نیاز برای استفاده در آینده)
+        $this->product_id = $product->id;
+        $this->save();
+
+        return $product;
     }
 }
