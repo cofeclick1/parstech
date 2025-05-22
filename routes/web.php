@@ -95,6 +95,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/', [SalesController::class, 'store'])->name('store');
         Route::get('/returns', [SalesController::class, 'returns'])->name('returns');
         Route::post('/returns', [SalesController::class, 'storeReturn'])->name('returns.store');
+
+
+
+
+
+            // فروش سریع
+    Route::get('/quick', [SalesController::class, 'quickForm'])->name('quick');
+    Route::post('/quick/store', [SalesController::class, 'quickStore'])->name('quick.store');
+
+
     });
 
     // Accounting

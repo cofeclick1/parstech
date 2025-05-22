@@ -159,8 +159,8 @@
                 </li>
 
                 {{-- فروش --}}
-                <li class="nav-item has-treeview {{ request()->is('sales*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('sales*') ? 'active' : '' }}">
+                <li class="nav-item has-treeview ...">
+                    <a href="#" class="nav-link ...">
                         <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>
                             فروش
@@ -169,22 +169,20 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('sales.newform') }}" class="nav-link {{ request()->routeIs('sales.newform') ? 'active' : '' }}">
-                                <i class="fas fa-file-invoice nav-icon"></i>
-                                <p>فروش جدید</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
-                                <i class="fas fa-list nav-icon"></i>
-                                <p>لیست فروش‌ها</p>
+                            <a href="{{ route('sales.create') }}" class="nav-link ...">
+                                <p>ثبت فروش جدید</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('sales.returns') }}" class="nav-link {{ request()->routeIs('sales.returns') ? 'active' : '' }}">
-                                <i class="fas fa-undo nav-icon"></i>
-                                <p>مرجوعی فروش</p>
+                            <a href="{{ route('sales.index') }}" class="nav-link ...">
+                                <p>لیست فاکتورها</p>
+                            </a>
+                        </li>
+                        <!-- اینجا زیرمنوی جدید فروش سریع را اضافه می‌کنیم -->
+                        <li class="nav-item">
+                            <a href="{{ route('sales.quick') }}" class="nav-link {{ request()->routeIs('sales.quick') ? 'active' : '' }}">
+                                <i class="fas fa-bolt nav-icon text-warning"></i>
+                                <p>فروش سریع</p>
                             </a>
                         </li>
                     </ul>
