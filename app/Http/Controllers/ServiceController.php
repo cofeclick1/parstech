@@ -71,7 +71,7 @@ class ServiceController extends Controller
     public function create()
     {
         $serviceCategories = Category::where('category_type', 'service')->get();
-        $units = Unit::orderBy('title')->get(); // واحدها از جدول units
+        $units = \App\Models\Unit::orderBy('title')->get();
         return view('services.create', compact('serviceCategories', 'units'));
     }
 

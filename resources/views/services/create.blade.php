@@ -107,12 +107,12 @@
 
                         <!-- انتخاب واحد خدمت -->
                         <div class="mb-3">
-                            <label for="unit" class="form-label required">واحد خدمت</label>
+                            <label for="unit_id" class="form-label required">واحد خدمت</label>
                             <div class="input-group">
-                                <select name="unit" id="unit" class="form-select" required>
+                                <select name="unit_id" id="unit_id" class="form-select" required>
                                     <option value="">انتخاب واحد</option>
                                     @foreach($units as $unit)
-                                        <option value="{{ $unit }}">{{ $unit }}</option>
+                                        <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->title }}</option>
                                     @endforeach
                                 </select>
                                 <button type="button" class="btn btn-outline-primary" id="add-unit-btn">
