@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'افزودن خدمت جدید')
+@section('title', 'ویرایش خدمت')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/service-create.css') }}">
@@ -31,7 +31,7 @@
             <div class="card shadow">
                 <div id="service-header" class="card-header bg-info text-white">
                     <h4 class="mb-0">
-                        <i class="fa fa-plus-circle me-2"></i>افزودن خدمت جدید
+                        <i class="fa fa-edit me-2"></i>ویرایش خدمت
                     </h4>
                 </div>
                 <div class="card-body">
@@ -48,13 +48,14 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
-                    <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
+                    <form action="{{ route('services.update', $service->id) }}" method="POST" enctype="multipart/form-data" autocomplete="off">
                         @csrf
+                        @method('PUT')
 
                         <!-- نام خدمت -->
                         <div class="mb-3">
                             <label for="title" class="form-label required">نام خدمت</label>
-                            <input type="text" name="title" id="title" class="form-control" required autofocus value="{{ old('title') }}">
+                            <input type="text" name="title" id="title" class="form-control" required autofocus value="{{ old('title', $service->title) }}">
                         </div>
 
                         <!-- کد خدمت با سوییچ تولید خودکار یا دستی -->
@@ -67,7 +68,7 @@
                                     name="service_code"
                                     class="form-control"
                                     required
-                                    value="{{ old('service_code') }}"
+                                    value="{{ old('service_code', $service->service_code) }}"
                                 >
                                 <span class="input-group-text">
                                     <label class="switch-edit-code mb-0">
@@ -85,13 +86,15 @@
                         <div class="mb-3">
                             <label for="image" class="form-label">تصویر خدمت</label>
                             <input type="file" name="image" id="image" class="form-control" accept="image/*">
-                            <img id="image_preview" src="#" alt="پیش نمایش" style="display:none; max-width:150px; margin-top:10px;">
+                            @if($service->image)
+                                <img src="{{ asset('storage/'.$service->image) }}" alt="پیش نمایش" style="max-width:150px; margin-top:10px;">
+                            @endif
                         </div>
 
                         <!-- اطلاعات خدمت -->
                         <div class="mb-3">
                             <label for="service_info" class="form-label">اطلاعات خدمات</label>
-                            <input type="text" name="service_info" id="service_info" class="form-control" value="{{ old('service_info') }}">
+                            <input type="text" name="service_info" id="service_info" class="form-control" value="{{ old('service_info', $service->service_info) }}">
                         </div>
 
                         <!-- دسته‌بندی خدمت -->
@@ -100,7 +103,7 @@
                             <select name="service_category_id" id="service_category_id" class="form-select">
                                 <option value="">انتخاب کنید</option>
                                 @foreach($serviceCategories ?? [] as $cat)
-                                    <option value="{{ $cat->id }}" {{ old('service_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    <option value="{{ $cat->id }}" {{ old('service_category_id', $service->service_category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -108,7 +111,7 @@
                         <!-- مبلغ فروش خدمت -->
                         <div class="mb-3">
                             <label for="price" class="form-label required">مبلغ فروش (تومان)</label>
-                            <input type="number" name="price" id="price" class="form-control" min="0" step="100" required value="{{ old('price') }}">
+                            <input type="number" name="price" id="price" class="form-control" min="0" step="100" required value="{{ old('price', $service->price) }}">
                         </div>
 
                         <!-- انتخاب واحد خدمت -->
@@ -118,7 +121,7 @@
                                 <select name="unit_id" id="unit_id" class="form-select" required>
                                     <option value="">انتخاب واحد</option>
                                     @foreach($units as $unit)
-                                        <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->title }}</option>
+                                        <option value="{{ $unit->id }}" {{ old('unit_id', $service->unit_id) == $unit->id ? 'selected' : '' }}>{{ $unit->title }}</option>
                                     @endforeach
                                 </select>
                                 <button type="button" class="btn btn-outline-primary" id="add-unit-btn">
@@ -131,36 +134,36 @@
                         <!-- توضیحات کوتاه -->
                         <div class="mb-3">
                             <label for="short_description" class="form-label">توضیح کوتاه</label>
-                            <input type="text" name="short_description" id="short_description" class="form-control" maxlength="255" value="{{ old('short_description') }}">
+                            <input type="text" name="short_description" id="short_description" class="form-control" maxlength="255" value="{{ old('short_description', $service->short_description) }}">
                         </div>
 
                         <!-- توضیحات -->
                         <div class="mb-3">
                             <label for="description" class="form-label">توضیحات</label>
-                            <textarea name="description" id="description" class="form-control" rows="2">{{ old('description') }}</textarea>
+                            <textarea name="description" id="description" class="form-control" rows="2">{{ old('description', $service->description) }}</textarea>
                         </div>
 
                         <!-- لینک یا صفحه اطلاعات گرفته شده (باکس متن) -->
                         <div class="mb-3">
                             <label for="info_link" class="form-label">صفحه/لینک اطلاعات گرفته شده</label>
-                            <textarea name="info_link" id="info_link" class="form-control" rows="2">{{ old('info_link') }}</textarea>
+                            <textarea name="info_link" id="info_link" class="form-control" rows="2">{{ old('info_link', $service->info_link) }}</textarea>
                         </div>
 
                         <!-- توضیحات کامل -->
                         <div class="mb-3">
                             <label for="full_description" class="form-label">توضیحات کامل</label>
-                            <textarea name="full_description" id="full_description" class="form-control" rows="5">{{ old('full_description') }}</textarea>
+                            <textarea name="full_description" id="full_description" class="form-control" rows="5">{{ old('full_description', $service->full_description) }}</textarea>
                         </div>
 
                         <!-- تیک فعال/غیرفعال -->
                         <div class="mb-3 form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', $service->is_active) ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_active">فعال باشد</label>
                         </div>
 
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-success px-4">
-                                <i class="fa fa-save me-1"></i>ثبت خدمت
+                                <i class="fa fa-save me-1"></i>ثبت تغییرات
                             </button>
                         </div>
                     </form>
@@ -200,10 +203,9 @@
 <script src="{{ asset('js/service-create.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // مقداردهی اولیه کد خدمت (همانند قبل)
-    // مقداردهی اولیه کد خدمت (همانند قبل)
     let codeInput = document.getElementById('service_code');
     let customSwitch = document.getElementById('custom_code_switch');
+    @if(!$service->service_code)
     let loadingCode = false;
     function fetchNextCode() {
         if(loadingCode) return;
@@ -220,18 +222,21 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
     fetchNextCode();
+    @endif
+
     customSwitch.addEventListener('change', function() {
         if(customSwitch.checked) {
             codeInput.readOnly = false;
             codeInput.value = '';
             codeInput.focus();
         } else {
+            @if(!$service->service_code)
             fetchNextCode();
+            @endif
         }
     });
 
-
-    // پیش‌نمایش تصویر
+    // پیش‌نمایش تصویر جدید در صورت انتخاب
     const imageInput = document.getElementById('image');
     const imagePreview = document.getElementById('image_preview');
     if(imageInput && imagePreview){

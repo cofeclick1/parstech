@@ -2,37 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'title',
         'service_code',
+        'service_info',
         'service_category_id',
-        'unit',
         'price',
-        'tax',
-        'execution_cost',
+        'unit_id',
+        'unit',
         'short_description',
         'description',
+        'info_link',
+        'full_description',
         'image',
         'is_active',
-        'is_vat_included',
-        'is_discountable',
     ];
 
-    public function category()
-    {
-        return $this->belongsTo(ServiceCategory::class, 'service_category_id');
-    }
-
-    /**
-     * ساخت یا بروزرسانی محصول معادل برای این خدمت
-     */
     public function createOrUpdateProduct()
     {
-        // توجه کن اگر category_id شما متفاوت است، اینجا مقداردهی را عوض کن
         \App\Models\Product::updateOrCreate(
             ['code' => $this->service_code],
             [
