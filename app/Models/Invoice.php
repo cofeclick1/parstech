@@ -20,6 +20,6 @@ class Invoice extends Model
     public function seller() { return $this->belongsTo(Seller::class, 'seller_id'); }
     public function currency() { return $this->belongsTo(Currency::class, 'currency_id'); }
 
-    
+
 
 }
