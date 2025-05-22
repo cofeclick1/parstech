@@ -171,8 +171,10 @@
                         <td class="text-center farsi-number">{{ $index + 1 }}</td>
                         <td>
                             <div class="product-info">
-                                <strong>{{ optional($item->product)->title ?: $item->description }}</strong>
-                                @if($item->description && optional($item->product)->title)
+                                <strong>
+                                    {{ optional($item->product)->title ?? optional($item->product)->name ?? $item->description ?? '-' }}
+                                </strong>
+                                @if($item->description && (optional($item->product)->title || optional($item->product)->name))
                                     <small class="text-muted d-block">{{ $item->description }}</small>
                                 @endif
                             </div>
@@ -260,7 +262,7 @@
             <h3 class="summary-title">ثبت یا ویرایش پرداخت</h3>
             <form id="statusUpdateForm" action="{{ route('sales.update-status', $sale) }}" method="POST" novalidate>
                 @csrf
-                @method('PATCH')
+                {{-- @method('PATCH') حذف شد تا فقط POST ارسال شود --}}
                 <div class="form-group mb-3">
                     <label class="form-label">روش پرداخت</label>
                     <select name="payment_method" class="form-select" required id="paymentMethodSelect">

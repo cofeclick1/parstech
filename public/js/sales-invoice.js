@@ -24,24 +24,32 @@ document.addEventListener("DOMContentLoaded", function () {
     // شماره فاکتور اتوماتیک/دستی
     const invoiceNumberInput = document.getElementById('invoice_number');
     const invoiceNumberSwitch = document.getElementById('invoiceNumberSwitch');
+    let initialInvoiceNumber = invoiceNumberInput ? invoiceNumberInput.value : ''; // مقدار اولیه از blade
+
     if (invoiceNumberInput && invoiceNumberSwitch) {
         function setInvoiceNumberReadOnly(isAuto) {
             invoiceNumberInput.readOnly = isAuto;
             if (isAuto) {
+                if (invoiceNumberInput.value && invoiceNumberInput.value !== '') {
+                    return;
+                }
                 fetch('/sales/next-invoice-number')
                     .then(response => response.json())
                     .then(data => {
-                        invoiceNumberInput.value = data.number;
+                        if (data && data.number) {
+                            invoiceNumberInput.value = data.number;
+                        }
                     })
                     .catch(() => {
-                        invoiceNumberInput.value = 'invoices-10001';
+                        if (!invoiceNumberInput.value || invoiceNumberInput.value === '') {
+                            invoiceNumberInput.value = 'invoices-10001';
+                        }
                     });
             } else {
                 invoiceNumberInput.value = '';
                 invoiceNumberInput.focus();
             }
         }
-        setInvoiceNumberReadOnly(invoiceNumberSwitch.checked);
         invoiceNumberSwitch.addEventListener('change', function () {
             setInvoiceNumberReadOnly(this.checked);
         });
@@ -268,7 +276,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (totalAmountEl) totalAmountEl.textContent = total.toLocaleString() + ' ریال';
         if (invoiceTotalEl) invoiceTotalEl.textContent = total.toLocaleString() + ' ریال';
 
-        // بعد از رندر، فوکوس و کرسر را بازگردان
         if (focusInfo) {
             let selector = `[name="${focusInfo.name}"][data-idx="${focusInfo.idx}"]`;
             let input = tbody.querySelector(selector);
@@ -328,13 +335,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ذخیره اقلام به input مخفی هنگام ثبت فرم
+    // پشتیبانی از هر دو فرم فروش معمولی و سریع
     let salesForm = document.getElementById('sales-invoice-form');
-    if (salesForm) {
-        salesForm.addEventListener('submit', function(e) {
-            let productsInput = document.getElementById('products_input');
-            if(productsInput) {
-                productsInput.value = JSON.stringify(invoiceItems);
-            }
-        });
-    }
+    let quickForm = document.getElementById('quick-sale-form');
+    [salesForm, quickForm].forEach(function(frm){
+        if(frm){
+            frm.addEventListener('submit', function(e){
+                let productsInput = document.getElementById('products_input');
+                if(productsInput){
+                    productsInput.value = JSON.stringify(invoiceItems);
+                }
+            });
+        }
+    });
 });

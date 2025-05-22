@@ -76,7 +76,9 @@
                     @foreach($sale->items as $index => $item)
                     <tr class="item-row">
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->product->title }}</td>
+                        <td>
+                            {{ optional($item->product)->title ?? optional($item->product)->name ?? $item->description ?? '-' }}
+                        </td>
                         <td class="quantity">{{ number_format($item->quantity) }}</td>
                         <td class="price price-format">{{ number_format($item->unit_price) }}</td>
                         <td class="discount price-format">{{ number_format($item->discount) }}</td>
