@@ -160,6 +160,51 @@
                                 <button type="button" class="btn btn-outline-success mt-2" id="add-attribute">افزودن ویژگی</button>
                             </div>
                         </div>
+
+                        {{-- تخصیص سهم سهامداران --}}
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label"><b>تخصیص سهم سهامداران برای این محصول</b></label>
+                                <div class="alert alert-light border shadow-sm mb-2">
+                                    <small>
+                                    اگر هیچ سهامداری انتخاب نشود، سهم محصول به طور مساوی بین همه سهامداران تقسیم می‌شود.<br>
+                                    اگر فقط یک نفر انتخاب شود، کل محصول برای او خواهد بود.<br>
+                                    اگر چند نفر انتخاب شوند، درصد هرکدام را وارد کنید (مجموع باید ۱۰۰ باشد، اگر خالی ماند بین انتخاب‌شده‌ها تقسیم می‌شود).
+                                    </small>
+                                </div>
+                                <div class="row" id="shareholder-list">
+                                    @foreach($shareholders as $shareholder)
+                                        <div class="col-md-4 mb-2">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        <input type="checkbox"
+                                                            name="shareholder_ids[]"
+                                                            value="{{ $shareholder->id }}"
+                                                            id="sh-{{ $shareholder->id }}"
+                                                            class="shareholder-checkbox"
+                                                        >
+                                                    </div>
+                                                </div>
+                                                <input type="number"
+                                                    name="shareholder_percents[{{ $shareholder->id }}]"
+                                                    id="percent-{{ $shareholder->id }}"
+                                                    class="form-control shareholder-percent"
+                                                    min="0" max="100" step="0.01"
+                                                    placeholder="درصد سهم"
+                                                    disabled
+                                                >
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">{{ $shareholder->full_name }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <small class="form-text text-muted" id="percent-warning" style="color:red;display:none"></small>
+                            </div>
+                        </div>
+
                         <div class="text-end">
                             <button type="submit" class="btn btn-success btn-lg px-4">ثبت محصول</button>
                             <a href="{{ route('products.index') }}" class="btn btn-secondary btn-lg px-4">انصراف</a>
@@ -205,4 +250,60 @@
 @section('scripts')
     <script src="https://unpkg.com/dropzone@6.0.0-beta.2/dist/dropzone-min.js"></script>
     <script src="{{ asset('js/products-create.js') }}"></script>
+    <script>
+        // منطق فعال و غیرفعال کردن و مقداردهی درصدها
+        document.addEventListener('DOMContentLoaded', function () {
+            let checkboxes = document.querySelectorAll('.shareholder-checkbox');
+            let percents = document.querySelectorAll('.shareholder-percent');
+            let warning = document.getElementById('percent-warning');
+            function updatePercents() {
+                let checked = [];
+                checkboxes.forEach((ch, idx) => {
+                    let percentInput = document.getElementById('percent-' + ch.value);
+                    if (ch.checked) checked.push(ch.value);
+                    percentInput.disabled = !ch.checked;
+                    if (!ch.checked) percentInput.value = '';
+                });
+                if (checked.length === 0) {
+                    // هیچ سهامداری انتخاب نشده: درصدها را خالی کن
+                    percents.forEach(inp => inp.value = '');
+                    warning.style.display = 'none';
+                } else if (checked.length === 1) {
+                    // فقط یک نفر: کل سهم برای او
+                    percents.forEach(inp => inp.value = '');
+                    document.getElementById('percent-' + checked[0]).value = 100;
+                    warning.innerText = '';
+                    warning.style.display = 'none';
+                } else {
+                    // چند نفر: تقسیم مساوی اگر هیچ مقداری وارد نشده
+                    let allEmpty = true;
+                    checked.forEach(id => {
+                        let val = document.getElementById('percent-' + id).value;
+                        if (val && parseFloat(val) > 0) allEmpty = false;
+                    });
+                    if (allEmpty) {
+                        let share = (100 / checked.length).toFixed(2);
+                        checked.forEach(id => {
+                            document.getElementById('percent-' + id).value = share;
+                        });
+                    }
+                    let sum = checked.reduce((acc, id) => acc + parseFloat(document.getElementById('percent-' + id).value || 0), 0);
+                    if (sum !== 100 && !allEmpty) {
+                        warning.innerText = 'مجموع درصدها باید ۱۰۰ باشد. مجموع فعلی: ' + sum;
+                        warning.style.display = 'block';
+                    } else {
+                        warning.innerText = '';
+                        warning.style.display = 'none';
+                    }
+                }
+            }
+            checkboxes.forEach(ch => {
+                ch.addEventListener('change', updatePercents);
+            });
+            percents.forEach(inp => {
+                inp.addEventListener('input', updatePercents);
+            });
+            updatePercents();
+        });
+    </script>
 @endsection

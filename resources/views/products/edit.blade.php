@@ -131,6 +131,30 @@
             <input type="file" class="form-control" name="video" id="video" accept="video/*">
         </div>
 
+        {{-- بخش سهامداران --}}
+        <div class="mb-4">
+            <label class="form-label"><b>سهامداران و درصد سهم هرکدام</b></label>
+            <div class="row">
+                @foreach($shareholders as $shareholder)
+                <div class="col-md-4 mb-2">
+                    <div class="input-group">
+                        <div class="input-group-text" style="min-width:120px">{{ $shareholder->full_name }}</div>
+                        <input type="number"
+                               class="form-control"
+                               name="shareholders[{{ $shareholder->id }}]"
+                               min="0"
+                               max="100"
+                               step="0.01"
+                               value="{{ old('shareholders.'.$shareholder->id, $product->shareholders->firstWhere('id', $shareholder->id)?->pivot->percent ?? '') }}"
+                               placeholder="درصد سهم">
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <small class="text-muted">درصد سهام هرکدام را وارد کنید. اگر سهامداری در این محصول سهم ندارد، مقدار را خالی بگذارید یا صفر وارد کنید.</small>
+        </div>
+
         <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
         <a href="{{ route('products.index') }}" class="btn btn-secondary">بازگشت</a>
     </form>

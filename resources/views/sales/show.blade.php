@@ -256,7 +256,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- فرم پرداخت و ویرایش -->
         <div class="summary-card">
             <h3 class="summary-title">ثبت یا ویرایش پرداخت</h3>

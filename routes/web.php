@@ -33,6 +33,11 @@ use App\Http\Controllers\Api\CategoryApiController;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ServiceApiController;
 
+
+
+
+Route::get('shareholders/{id}', [ShareholderController::class, 'show'])->name('shareholders.show');
+
 Route::post('sales/{sale}/status', [SaleController::class, 'updateStatus'])->name('sales.update-status');
 
 Route::get('/services/next-code', [ServiceController::class, 'nextCode']);
@@ -88,6 +93,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/customers', [PersonController::class, 'customers'])->name('customers');
         Route::get('/suppliers', [PersonController::class, 'suppliers'])->name('suppliers');
         Route::get('/api/persons/next-code', [PersonController::class, 'getNextCode'])->name('persons.next-code');
+
     });
 
     // Sales

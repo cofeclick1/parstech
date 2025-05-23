@@ -93,4 +93,10 @@ class Person extends Model
     {
         return $this->sales()->latest()->first();
     }
+
+    public function ownedProducts()
+    {
+        return $this->belongsToMany(\App\Models\Product::class, 'product_shareholder', 'person_id', 'product_id')
+            ->withPivot('percent');
+    }
 }

@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Unit;
 use App\Models\Service;
+use App\Models\Person;
 
 class ProductController extends Controller
 {
@@ -30,7 +31,8 @@ class ProductController extends Controller
         $categories = Category::where('category_type', 'product')->get();
         $brands = Brand::all();
         $units = Unit::all();
-        return view('products.create', compact('default_code', 'categories', 'brands', 'units'));
+        $shareholders = Person::where('type', 'shareholder')->get();
+        return view('products.create', compact('default_code', 'categories', 'brands', 'units', 'shareholders'));
     }
 
     /**
@@ -72,7 +74,45 @@ class ProductController extends Controller
         if (!isset($data['stock'])) $data['stock'] = 0;
         if (!isset($data['min_stock'])) $data['min_stock'] = 0;
 
-        Product::create($data);
+        $product = Product::create($data);
+
+        // ----- ذخیره سهم سهامداران -----
+        if ($request->has('shareholder_ids')) {
+            $syncData = [];
+            $percents = $request->input('shareholder_percents', []);
+            $ids = $request->input('shareholder_ids', []);
+            $totalPercent = 0;
+            foreach ($ids as $id) {
+                $percent = isset($percents[$id]) ? floatval($percents[$id]) : 0;
+                $syncData[$id] = ['percent' => $percent];
+                $totalPercent += $percent;
+            }
+            // اگر مجموع درصد کمتر از 100 بود و فقط یک نفر انتخاب شده، کل درصد را به او بده
+            if (count($ids) === 1) {
+                $syncData[$ids[0]] = ['percent' => 100];
+            }
+            // اگر مجموع درصد کمتر از 100 و چند نفر انتخاب شده بودند، بین‌شان تقسیم کن
+            elseif (count($ids) > 1 && $totalPercent < 100) {
+                $remained = 100 - $totalPercent;
+                $extra = $remained / count($ids);
+                foreach ($ids as $id) {
+                    $syncData[$id]['percent'] += $extra;
+                }
+            }
+            $product->shareholders()->sync($syncData);
+        } else {
+            // اگر هیچ سهامداری انتخاب نشد، بین همه سهامداران تقسیم کن
+            $allShareholders = Person::where('type', 'shareholder')->get();
+            $count = $allShareholders->count();
+            if ($count > 0) {
+                $percent = 100 / $count;
+                $syncData = [];
+                foreach ($allShareholders as $sh) {
+                    $syncData[$sh->id] = ['percent' => $percent];
+                }
+                $product->shareholders()->sync($syncData);
+            }
+        }
 
         return redirect()->route('products.index')->with('success', 'محصول با موفقیت ثبت شد.');
     }
@@ -86,7 +126,8 @@ class ProductController extends Controller
         $categories = Category::where('category_type', 'product')->get();
         $brands = Brand::all();
         $units = Unit::all();
-        return view('products.edit', compact('product', 'categories', 'brands', 'units'));
+        $shareholders = Person::where('type', 'shareholder')->get();
+        return view('products.edit', compact('product', 'categories', 'brands', 'units', 'shareholders'));
     }
 
     /**
@@ -129,6 +170,42 @@ class ProductController extends Controller
         }
 
         $product->update($data);
+
+        // ----- بروزرسانی سهم سهامداران -----
+        if ($request->has('shareholder_ids')) {
+            $syncData = [];
+            $percents = $request->input('shareholder_percents', []);
+            $ids = $request->input('shareholder_ids', []);
+            $totalPercent = 0;
+            foreach ($ids as $id) {
+                $percent = isset($percents[$id]) ? floatval($percents[$id]) : 0;
+                $syncData[$id] = ['percent' => $percent];
+                $totalPercent += $percent;
+            }
+            if (count($ids) === 1) {
+                $syncData[$ids[0]] = ['percent' => 100];
+            }
+            elseif (count($ids) > 1 && $totalPercent < 100) {
+                $remained = 100 - $totalPercent;
+                $extra = $remained / count($ids);
+                foreach ($ids as $id) {
+                    $syncData[$id]['percent'] += $extra;
+                }
+            }
+            $product->shareholders()->sync($syncData);
+        } else {
+            // اگر هیچ سهامداری انتخاب نشد، بین همه سهامداران تقسیم کن
+            $allShareholders = Person::where('type', 'shareholder')->get();
+            $count = $allShareholders->count();
+            if ($count > 0) {
+                $percent = 100 / $count;
+                $syncData = [];
+                foreach ($allShareholders as $sh) {
+                    $syncData[$sh->id] = ['percent' => $percent];
+                }
+                $product->shareholders()->sync($syncData);
+            }
+        }
 
         return redirect()->route('products.index')->with('success', 'محصول با موفقیت ویرایش شد.');
     }

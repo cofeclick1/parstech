@@ -49,4 +49,9 @@ class Product extends Model
     {
         return $this->hasMany(SaleItem::class);
     }
+    public function shareholders()
+    {
+        return $this->belongsToMany(\App\Models\Person::class, 'product_shareholder', 'product_id', 'person_id')
+            ->withPivot('percent');
+    }
 }

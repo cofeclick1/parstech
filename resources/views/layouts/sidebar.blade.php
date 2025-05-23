@@ -18,11 +18,11 @@
                 </div>
             </div>
             <div id="userMenuDropdown" class="list-group w-100 mt-1" style="display:none;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:999;">
-                <a class="list-group-item list-group-item-action" href="#" data-toggle="modal" data-target="#editProfileModal">
+                <a class="list-group-item list-group-item-action" href="{{ route('profile.edit') }}">
                     <i class="fas fa-user-edit"></i> ویرایش پروفایل
                 </a>
-                <a class="list-group-item list-group-item-action" href="#" data-toggle="modal" data-target="#changePasswordModal">
-                    <i class="fas fa-key"></i> تغییر رمز عبور
+                <a class="list-group-item list-group-item-action" href="{{ route('settings.company') }}">
+                    <i class="fas fa-cog"></i> تنظیمات
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="list-group-item list-group-item-action text-danger" href="#" onclick="event.preventDefault();document.getElementById('logout-form-sidebar').submit();">
@@ -333,40 +333,6 @@
     </div>
 </aside>
 
-<!-- Modal برای ویرایش پروفایل -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editProfileModalLabel">ویرایش پروفایل</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="بستن">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                @include('profile.partials.update-profile-information-form')
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal برای تغییر رمز عبور -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changePasswordModalLabel">تغییر رمز عبور</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="بستن">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                @include('profile.partials.update-password-form')
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
     .nav-treeview .nav-link.active,
     .nav-treeview .nav-link.active:focus,
@@ -389,27 +355,7 @@
         background: #222d32;
     }
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    // فعالسازی آکاردئون واقعی با بستن منوی قبلی
-    document.addEventListener("DOMContentLoaded", function () {
-        const sidebarMenu = document.getElementById("sidebar-menu");
-        if(sidebarMenu){
-            sidebarMenu.querySelectorAll('.has-treeview > a').forEach(function(menuLink){
-                menuLink.addEventListener('click', function(e){
-                    e.preventDefault();
-                    const parentLi = menuLink.parentElement;
-                    // بستن همه منوها به جز منوی جاری
-                    sidebarMenu.querySelectorAll('.has-treeview.menu-open').forEach(function(openLi){
-                        if(openLi !== parentLi) openLi.classList.remove('menu-open');
-                    });
-                    parentLi.classList.toggle('menu-open');
-                });
-            });
-        }
-    });
     document.addEventListener('DOMContentLoaded', function() {
         const toggle = document.getElementById('userMenuToggle');
         const menu = document.getElementById('userMenuDropdown');
@@ -418,11 +364,24 @@
                 e.preventDefault();
                 menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
             });
-            // بستن منو موقع کلیک بیرون از منو
             document.addEventListener('click', function(e) {
                 if (!toggle.contains(e.target) && !menu.contains(e.target)) {
                     menu.style.display = 'none';
                 }
+            });
+        }
+        // باز و بسته شدن منوهای سایدبار
+        const sidebarMenu = document.getElementById("sidebar-menu");
+        if(sidebarMenu){
+            sidebarMenu.querySelectorAll('.has-treeview > a').forEach(function(menuLink){
+                menuLink.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const parentLi = menuLink.parentElement;
+                    sidebarMenu.querySelectorAll('.has-treeview.menu-open').forEach(function(openLi){
+                        if(openLi !== parentLi) openLi.classList.remove('menu-open');
+                    });
+                    parentLi.classList.toggle('menu-open');
+                });
             });
         }
     });

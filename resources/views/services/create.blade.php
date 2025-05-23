@@ -51,13 +51,11 @@
                     <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
                         @csrf
 
-                        <!-- نام خدمت -->
                         <div class="mb-3">
                             <label for="title" class="form-label required">نام خدمت</label>
                             <input type="text" name="title" id="title" class="form-control" required autofocus value="{{ old('title') }}">
                         </div>
 
-                        <!-- کد خدمت با سوییچ تولید خودکار یا دستی -->
                         <div class="form-group mb-3">
                             <label for="service_code" class="form-label">کد خدمات</label>
                             <div class="input-group">
@@ -81,20 +79,17 @@
                             </small>
                         </div>
 
-                        <!-- تصویر خدمت + پیش‌نمایش -->
                         <div class="mb-3">
                             <label for="image" class="form-label">تصویر خدمت</label>
                             <input type="file" name="image" id="image" class="form-control" accept="image/*">
                             <img id="image_preview" src="#" alt="پیش نمایش" style="display:none; max-width:150px; margin-top:10px;">
                         </div>
 
-                        <!-- اطلاعات خدمت -->
                         <div class="mb-3">
                             <label for="service_info" class="form-label">اطلاعات خدمات</label>
                             <input type="text" name="service_info" id="service_info" class="form-control" value="{{ old('service_info') }}">
                         </div>
 
-                        <!-- دسته‌بندی خدمت -->
                         <div class="mb-3">
                             <label for="service_category_id" class="form-label">دسته‌بندی خدمت</label>
                             <select name="service_category_id" id="service_category_id" class="form-select">
@@ -105,13 +100,11 @@
                             </select>
                         </div>
 
-                        <!-- مبلغ فروش خدمت -->
                         <div class="mb-3">
                             <label for="price" class="form-label required">مبلغ فروش (تومان)</label>
                             <input type="number" name="price" id="price" class="form-control" min="0" step="100" required value="{{ old('price') }}">
                         </div>
 
-                        <!-- انتخاب واحد خدمت -->
                         <div class="mb-3">
                             <label for="unit_id" class="form-label required">واحد خدمت</label>
                             <div class="input-group">
@@ -128,34 +121,55 @@
                         </div>
                         <ul id="unit-list" class="list-group mb-3" style="display: none"></ul>
 
-                        <!-- توضیحات کوتاه -->
                         <div class="mb-3">
                             <label for="short_description" class="form-label">توضیح کوتاه</label>
                             <input type="text" name="short_description" id="short_description" class="form-control" maxlength="255" value="{{ old('short_description') }}">
                         </div>
 
-                        <!-- توضیحات -->
                         <div class="mb-3">
                             <label for="description" class="form-label">توضیحات</label>
                             <textarea name="description" id="description" class="form-control" rows="2">{{ old('description') }}</textarea>
                         </div>
 
-                        <!-- لینک یا صفحه اطلاعات گرفته شده (باکس متن) -->
                         <div class="mb-3">
                             <label for="info_link" class="form-label">صفحه/لینک اطلاعات گرفته شده</label>
                             <textarea name="info_link" id="info_link" class="form-control" rows="2">{{ old('info_link') }}</textarea>
                         </div>
 
-                        <!-- توضیحات کامل -->
                         <div class="mb-3">
                             <label for="full_description" class="form-label">توضیحات کامل</label>
                             <textarea name="full_description" id="full_description" class="form-control" rows="5">{{ old('full_description') }}</textarea>
                         </div>
 
-                        <!-- تیک فعال/غیرفعال -->
                         <div class="mb-3 form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="is_active">فعال باشد</label>
+                            <label class="form-check-label" for="is_active">
+                                فعال باشد
+                            </label>
+                        </div>
+
+                        {{-- بخش سهامداران --}}
+                        <div class="mb-4">
+                            <label class="form-label"><b>سهامداران و درصد سهم هرکدام</b></label>
+                            <div class="row">
+                                @foreach($shareholders as $shareholder)
+                                <div class="col-md-4 mb-2">
+                                    <div class="input-group">
+                                        <div class="input-group-text" style="min-width:120px">{{ $shareholder->full_name }}</div>
+                                        <input type="number"
+                                               class="form-control"
+                                               name="shareholders[{{ $shareholder->id }}]"
+                                               min="0"
+                                               max="100"
+                                               step="0.01"
+                                               value="{{ old('shareholders.'.$shareholder->id, '') }}"
+                                               placeholder="درصد سهم">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            <small class="text-muted">درصد سهام هرکدام را وارد کنید. اگر سهامداری در این خدمت سهم ندارد، مقدار را خالی بگذارید یا صفر وارد کنید.</small>
                         </div>
 
                         <div class="d-flex justify-content-end">
@@ -201,7 +215,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // مقداردهی اولیه کد خدمت (همانند قبل)
-    // مقداردهی اولیه کد خدمت (همانند قبل)
     let codeInput = document.getElementById('service_code');
     let customSwitch = document.getElementById('custom_code_switch');
     let loadingCode = false;
@@ -229,7 +242,6 @@ document.addEventListener('DOMContentLoaded', function () {
             fetchNextCode();
         }
     });
-
 
     // پیش‌نمایش تصویر
     const imageInput = document.getElementById('image');
