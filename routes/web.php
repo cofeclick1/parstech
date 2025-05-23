@@ -35,9 +35,9 @@ use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\IncomeController;
 
 Route::prefix('financial')->group(function () {
-    Route::resource('income', IncomeController::class);
+    Route::resource('incomes', IncomeController::class);
 });
- 
+
 
 
 Route::get('shareholders/{id}', [ShareholderController::class, 'show'])->name('shareholders.show');

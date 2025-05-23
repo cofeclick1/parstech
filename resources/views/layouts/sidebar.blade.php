@@ -233,7 +233,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('financial.income') }}" class="nav-link {{ request()->routeIs('financial.income') ? 'active' : '' }}">
+                            <a href="{{ route('financial.incomes.index') }}" class="nav-link {{ request()->routeIs('financial.income') ? 'active' : '' }}">
                                 <i class="fas fa-arrow-down nav-icon"></i>
                                 <p>درآمدها</p>
                             </a>
