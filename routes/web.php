@@ -32,18 +32,12 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\Api\CategoryApiController;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ServiceApiController;
-
 use App\Http\Controllers\IncomeController;
-Route::get('/', function () {
-    return view('welcome');
-});
 
-// امور مالی
-Route::prefix('financial')->group(function () {
-    Route::resource('incomes', IncomeController::class);
-    // سایر resourceهای مالی مثل expenses و ... را هم می‌توان اینجا تعریف کرد.
-});
-
+// این resource را حذف یا کامنت کن (دیگر لازم نیست)
+// Route::prefix('financial')->group(function () {
+//     Route::resource('incomes', IncomeController::class);
+// });
 
 
 Route::get('shareholders/{id}', [ShareholderController::class, 'show'])->name('shareholders.show');
@@ -128,7 +122,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Financial
     Route::prefix('financial')->name('financial.')->group(function () {
-        Route::get('/income', [FinancialController::class, 'income'])->name('income');
+        Route::resource('incomes', IncomeController::class);
         Route::get('/expenses', [FinancialController::class, 'expenses'])->name('expenses');
         Route::get('/banking', [FinancialController::class, 'banking'])->name('banking');
         Route::get('/cheques', [FinancialController::class, 'cheques'])->name('cheques');
@@ -158,7 +152,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('services.formbuilder');
     })->name('services.formbuilder');
     Route::resource('services', ServiceController::class);
-
 
     // Stock Management
     Route::prefix('stocks')->name('stocks.')->group(function () {
@@ -218,9 +211,6 @@ Route::delete('/currencies/{currency}', [CurrencyController::class, 'destroy'])-
 
 
 
-
-
-
 Route::get('/sales/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
 Route::get('/sales/newform', [InvoiceController::class, 'newForm'])->name('sales.newform');
 
@@ -269,12 +259,8 @@ Route::get('/products/ajax-list', [\App\Http\Controllers\ProductController::clas
 Route::get('/services/ajax-list', [\App\Http\Controllers\ServiceController::class, 'ajaxList']);
 
 
-
 // برای دسته‌بندی‌ها اگر لازم است
 Route::get('/api/categories', [CategoryController::class, 'apiList']);
-
-
-
 
 
 require __DIR__.'/auth.php';
