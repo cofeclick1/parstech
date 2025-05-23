@@ -32,12 +32,12 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\Api\CategoryApiController;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ServiceApiController;
+
 use App\Http\Controllers\IncomeController;
 
-// این resource را حذف یا کامنت کن (دیگر لازم نیست)
-// Route::prefix('financial')->group(function () {
-//     Route::resource('incomes', IncomeController::class);
-// });
+
+
+
 
 
 Route::get('shareholders/{id}', [ShareholderController::class, 'show'])->name('shareholders.show');
@@ -153,6 +153,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('services.formbuilder');
     Route::resource('services', ServiceController::class);
 
+
     // Stock Management
     Route::prefix('stocks')->name('stocks.')->group(function () {
         Route::get('/in', [StockController::class, 'in'])->name('in');
@@ -211,6 +212,9 @@ Route::delete('/currencies/{currency}', [CurrencyController::class, 'destroy'])-
 
 
 
+
+
+
 Route::get('/sales/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
 Route::get('/sales/newform', [InvoiceController::class, 'newForm'])->name('sales.newform');
 
@@ -259,8 +263,12 @@ Route::get('/products/ajax-list', [\App\Http\Controllers\ProductController::clas
 Route::get('/services/ajax-list', [\App\Http\Controllers\ServiceController::class, 'ajaxList']);
 
 
+
 // برای دسته‌بندی‌ها اگر لازم است
 Route::get('/api/categories', [CategoryController::class, 'apiList']);
+
+
+
 
 
 require __DIR__.'/auth.php';

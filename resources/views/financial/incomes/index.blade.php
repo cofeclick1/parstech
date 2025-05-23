@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="mb-4">لیست درآمدها</h1>
-    <a class="btn btn-success mb-3" href="{{ route('income.create') }}">افزودن درآمد جدید</a>
+    <a class="btn btn-success mb-3" href="{{ route('financial.incomes.create') }}">افزودن درآمد جدید</a>
     <div class="mb-3">
         <strong>جمع کل درآمدها: </strong> {{ number_format($total) }} تومان
     </div>
@@ -32,8 +32,8 @@
                 <td>{{ $income->customer ? $income->customer->name : '-' }}</td>
                 <td>{{ $income->note }}</td>
                 <td>
-                    <a href="{{ route('income.edit', $income) }}" class="btn btn-primary btn-sm">ویرایش</a>
-                    <form action="{{ route('income.destroy', $income) }}" method="POST" style="display:inline">
+                    <a href="{{ route('financial.incomes.edit', $income) }}" class="btn btn-primary btn-sm">ویرایش</a>
+                    <form action="{{ route('financial.incomes.destroy', $income) }}" method="POST" style="display:inline">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('حذف شود؟')">حذف</button>
                     </form>
