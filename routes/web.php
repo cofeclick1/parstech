@@ -32,10 +32,16 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\Api\CategoryApiController;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ServiceApiController;
-use App\Http\Controllers\IncomeController;
 
+use App\Http\Controllers\IncomeController;
+Route::get('/', function () {
+    return view('welcome');
+});
+
+// امور مالی
 Route::prefix('financial')->group(function () {
     Route::resource('incomes', IncomeController::class);
+    // سایر resourceهای مالی مثل expenses و ... را هم می‌توان اینجا تعریف کرد.
 });
 
 
