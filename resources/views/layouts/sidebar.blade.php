@@ -190,6 +190,12 @@
                                 <p>فروش سریع</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('sales.returns.index') }}" class="nav-link {{ request()->routeIs('sales.returns.*') ? 'active' : '' }}">
+                                <i class="fas fa-undo nav-icon"></i>
+                                <p>برگشت از فروش</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 {{-- حسابداری --}}

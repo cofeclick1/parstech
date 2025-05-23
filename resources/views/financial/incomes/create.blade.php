@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+    <div====+چتچچذد ر  class="container">
     <h1 class="mb-4">افزودن درآمد جدید</h1>
-    <form method="POST" action="{{ route('income.store') }}">
+    <form method="POST" action="{{ route('financial.incomes.store') }}">
         @csrf
         <div class="mb-3">
             <label>عنوان درآمد</label>
@@ -31,7 +31,7 @@
             <textarea name="note" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-success">ثبت درآمد</button>
-        <a href="{{ route('income.index') }}" class="btn btn-secondary">بازگشت</a>
+        <a href="{{ route('financial.incomes.index') }}" class="btn btn-secondary">بازگشت</a>
     </form>
 </div>
 @endsection

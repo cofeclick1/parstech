@@ -263,6 +263,11 @@ Route::get('/products/ajax-list', [\App\Http\Controllers\ProductController::clas
 Route::get('/services/ajax-list', [\App\Http\Controllers\ServiceController::class, 'ajaxList']);
 
 
+Route::prefix('sales')->name('sales.')->group(function () {
+    // ... سایر روت‌های فروش
+    Route::resource('returns', \App\Http\Controllers\SaleReturnController::class);
+});
+
 
 // برای دسته‌بندی‌ها اگر لازم است
 Route::get('/api/categories', [CategoryController::class, 'apiList']);
