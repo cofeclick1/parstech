@@ -12,13 +12,13 @@ class IncomeController extends Controller
     {
         $incomes = Income::with('customer')->orderByDesc('income_date')->paginate(20);
         $total = Income::sum('amount');
-        return view('financial.income.index', compact('incomes', 'total'));
+        return view('financial.incomes.index', compact('incomes', 'total'));
     }
 
     public function create()
     {
         $customers = Customer::all();
-        return view('financial.income.create', compact('customers'));
+        return view('financial.incomes.create', compact('customers'));
     }
 
     public function store(Request $request)
@@ -31,13 +31,13 @@ class IncomeController extends Controller
             'note' => 'nullable|string',
         ]);
         Income::create($request->all());
-        return redirect()->route('income.index')->with('success', 'درآمد با موفقیت ثبت شد.');
+        return redirect()->route('financial.incomes.index')->with('success', 'درآمد با موفقیت ثبت شد.');
     }
 
     public function edit(Income $income)
     {
         $customers = Customer::all();
-        return view('financial.income.edit', compact('income', 'customers'));
+        return view('financial.incomes.edit', compact('income', 'customers'));
     }
 
     public function update(Request $request, Income $income)
@@ -50,12 +50,12 @@ class IncomeController extends Controller
             'note' => 'nullable|string',
         ]);
         $income->update($request->all());
-        return redirect()->route('income.index')->with('success', 'درآمد ویرایش شد.');
+        return redirect()->route('financial.incomes.index')->with('success', 'درآمد ویرایش شد.');
     }
 
     public function destroy(Income $income)
     {
         $income->delete();
-        return redirect()->route('income.index')->with('success', 'درآمد حذف شد.');
+        return redirect()->route('financial.incomes.index')->with('success', 'درآمد حذف شد.');
     }
 }
