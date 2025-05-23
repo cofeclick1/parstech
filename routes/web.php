@@ -32,7 +32,11 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\Api\CategoryApiController;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ServiceApiController;
+use App\Http\Controllers\IncomeController;
 
+Route::prefix('financial')->group(function () {
+    Route::resource('income', IncomeController::class);
+});
 
 
 

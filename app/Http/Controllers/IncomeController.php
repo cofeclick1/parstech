@@ -2,63 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Income;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class IncomeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $incomes = Income::with('customer')->orderByDesc('income_date')->paginate(20);
+        $total = Income::sum('amount');
+        return view('financial.income.index', compact('incomes', 'total'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $customers = Customer::all();
+        return view('financial.income.create', compact('customers'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'amount' => 'required|numeric',
+            'income_date' => 'nullable|date',
+            'customer_id' => 'nullable|exists:customers,id',
+            'note' => 'nullable|string',
+        ]);
+        Income::create($request->all());
+        return redirect()->route('income.index')->with('success', 'درآمد با موفقیت ثبت شد.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Income $income)
     {
-        //
+        $customers = Customer::all();
+        return view('financial.income.edit', compact('income', 'customers'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Income $income)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'amount' => 'required|numeric',
+            'income_date' => 'nullable|date',
+            'customer_id' => 'nullable|exists:customers,id',
+            'note' => 'nullable|string',
+        ]);
+        $income->update($request->all());
+        return redirect()->route('income.index')->with('success', 'درآمد ویرایش شد.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Income $income)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $income->delete();
+        return redirect()->route('income.index')->with('success', 'درآمد حذف شد.');
     }
 }
